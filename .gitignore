@@ -1,0 +1,20 @@
+# Obtained from
+# <https://github.com/diegonetto/generator-ionic/blob/master/templates/common/_gitignore>
+node_modules
+www
+.idea
+.temp
+.sass-cache
+<%= appPath %>/bower_components
+coverage
+platforms
+plugins
+*.swp
+*.swo
+*.log
+*.DS_Store
+
+app/scripts/configuration.js
+
+# Additionally
+.idea/

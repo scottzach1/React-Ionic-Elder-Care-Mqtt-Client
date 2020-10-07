@@ -1,0 +1,7 @@
+{
+  "name": "TabbedTemplate",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
