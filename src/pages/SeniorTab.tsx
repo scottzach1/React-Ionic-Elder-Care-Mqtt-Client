@@ -1,23 +1,25 @@
 import React from 'react';
 import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
 import './SeniorTab.css';
+import SeniorLocationCard from "../components/senior/SeniorLocationCard";
+import SeniorLocationsGraph from "../components/senior/SeniorLocationsGraph";
 
 const SeniorTab: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Tab 1</IonTitle>
+          <IonTitle>Senior Tab</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Tab 1</IonTitle>
+            <IonTitle size="large">Senior Tab</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer name="Tab 1 page"/>
+        <SeniorLocationCard lastSeenLocation={"Toilet"} mins={5}/>
+        <SeniorLocationsGraph/>
       </IonContent>
     </IonPage>
   );
