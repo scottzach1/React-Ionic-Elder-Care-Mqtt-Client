@@ -25,34 +25,37 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import MqttProvider from "./providers/MqttProvider";
 
 const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route path="/senior" component={SeniorTab} exact={true}/>
-          <Route path="/battery" component={BatteryTab} exact={true}/>
-          <Route path="/settings" component={SettingsTab}/>
-          <Route path="/" render={() => <Redirect to="/senior"/>} exact={true}/>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="senior" href="/senior">
-            <IonIcon icon={accessibilityOutline}/>
-            <IonLabel>Senior</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="battery" href="/battery">
-            <IonIcon icon={batteryFullOutline}/>
-            <IonLabel>Battery</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="settings" href="/settings">
-            <IonIcon icon={settingsOutline}/>
-            <IonLabel>Settings</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
+  <MqttProvider>
+    <IonApp>
+      <IonReactRouter>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Route path="/senior" component={SeniorTab} exact={true}/>
+            <Route path="/battery" component={BatteryTab} exact={true}/>
+            <Route path="/settings" component={SettingsTab}/>
+            <Route path="/" render={() => <Redirect to="/senior"/>} exact={true}/>
+          </IonRouterOutlet>
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="senior" href="/senior">
+              <IonIcon icon={accessibilityOutline}/>
+              <IonLabel>Senior</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="battery" href="/battery">
+              <IonIcon icon={batteryFullOutline}/>
+              <IonLabel>Battery</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="settings" href="/settings">
+              <IonIcon icon={settingsOutline}/>
+              <IonLabel>Settings</IonLabel>
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      </IonReactRouter>
+    </IonApp>
+  </MqttProvider>
 );
 
 export default App;
