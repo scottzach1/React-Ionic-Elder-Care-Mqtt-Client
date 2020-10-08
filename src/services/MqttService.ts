@@ -1,30 +1,33 @@
 import assert from "assert";
-import {ErrorWithInvocationContext, Message, MQTTError} from "paho-mqtt";
+import Paho from 'paho-mqtt';
 
 const MqttConfig = {
-  address: 'http://test.mosquito.org',
+  address: 'test.mosquitto.org',
   port: 8080,
   topic: 'swen325/a3',
   path: '/mqtt',
-  clientId: 'p{?{Qy6CK)r!4y-p'
+  clientId: 'pSaHsOEICndfoefhHSp'
 }
 
 type MqttServiceStatus = 'Disconnected' | 'Disconnecting' | 'Connecting' | 'Connected';
 
 export class MqttService {
   private status: MqttServiceStatus = 'Disconnected';
-  private client: Paho.MQTT.Client | undefined;
-  private message: Paho.MQTT.Message | undefined;
+  private client: Paho.Client | undefined;
+  private message: Paho.Message | undefined;
   private messageToSend: string = '';
 
   constructor() {
+    console.log('mqtt service started');
+    this.connect();
   }
 
   public disconnect() {
     if (this.status !== 'Connected') return;
+    assert(this.client)
 
     this.status = 'Disconnecting';
-    this.client?.disconnect();
+    this.client.disconnect();
     this.status = 'Disconnected';
   }
 
@@ -32,7 +35,7 @@ export class MqttService {
     const {address, port, path, clientId} = MqttConfig;
 
     this.status = 'Connecting';
-    this.client = new Paho.MQTT.Client(address, port, path, clientId);
+    this.client = new Paho.Client(address, port, path, clientId);
 
     console.log('connecting to mqtt via websocket');
     this.client.connect({
@@ -50,7 +53,7 @@ export class MqttService {
     if (this.status !== 'Connected') return;
     assert(this.client);
 
-    const message = new Paho.MQTT.Message(this.messageToSend);
+    const message = new Paho.Message(this.messageToSend);
     this.client?.send(message);
   }
 
@@ -63,17 +66,17 @@ export class MqttService {
     this.client.subscribe(topic);
   }
 
-  public onFailure = (error: ErrorWithInvocationContext) => {
+  public onFailure = (error: Paho.ErrorWithInvocationContext) => {
     console.log('failed to connect to mqtt', error);
     this.status = 'Disconnected';
   }
 
-  public onConnectionLost = (error: MQTTError) => {
+  public onConnectionLost = (error: Paho.MQTTError) => {
     if (error.errorCode === 0) return;
     this.status = 'Disconnected';
   }
 
-  public onMessageArrived = (message: Message) => {
+  public onMessageArrived = (message: Paho.Message) => {
     console.log('received message', message);
     this.message = message;
   }
