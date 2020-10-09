@@ -22,7 +22,7 @@ export class MqttHandler {
   }
 
   private onMessageArrived = async (message: Paho.Message) => {
-    const event = new MqttEventFromString(message.payloadString);
+    const event = new MqttEventFromCsv(message.payloadString);
     const key = getEventKey(event.sensorLocation);
 
     await appendEvents(key, event);
@@ -50,7 +50,7 @@ export interface MqttEvent {
   batteryStatus: number,
 }
 
-export class MqttEventFromString implements MqttEvent {
+export class MqttEventFromCsv implements MqttEvent {
   public timestamp: Date | undefined;
   public sensorLocation: MqttLocation;
   public motionStatus: MqttStatus;
