@@ -1,11 +1,12 @@
 import {MqttService} from "./MqttService";
 import Paho from "paho-mqtt";
 import {appendEvents, getEventKey, initStorage, updateLastEvent} from "../external/StorageManager";
+import {ObserverSubject} from "./ObserverSubject";
 
 export class MqttHandler {
   private client: MqttService | undefined;
-  private onMessageArrivedHandler: Paho.OnMessageHandler[] = [];
-  private onFailureHandler: Paho.OnFailureCallback[] = [];
+  public messageSubject = new ObserverSubject<MqttEvent>();
+  public failureSubject = new ObserverSubject<Paho.MQTTError>()
 
   public constructor() {
     // Ensure Storage Initialised before we connect.
@@ -20,8 +21,6 @@ export class MqttHandler {
     console.log('handler connected');
   }
 
-  // private addOnMessageArrivedHandler
-
   private onMessageArrived = async (message: Paho.Message) => {
     const event = new MqttEvent(message.payloadString);
     const key = getEventKey(event.sensorLocation);
@@ -29,11 +28,14 @@ export class MqttHandler {
     await appendEvents(key, event);
     await updateLastEvent(event);
 
+    this.messageSubject.notify(event);
+
     console.log('received message within handler', event);
   }
 
   private onFailure = (error: Paho.ErrorWithInvocationContext) => {
     console.log('failed to connect to mqtt within handler', error);
+    this.failureSubject.notify(error);
   }
 }
 
@@ -68,3 +70,7 @@ export class MqttEvent {
     this.batteryStatus = parseInt(data[3]);
   }
 }
+
+const mqttHandler = new MqttHandler();
+
+export default mqttHandler;

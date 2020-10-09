@@ -1,15 +1,15 @@
 import React, {createContext, FC, useState} from "react";
-import {MqttHandler} from "../services/MqttHandler";
+import mqttHandler, {MqttHandler} from "../services/MqttHandler";
 
 interface Props {
 }
 
-type MqttProviderType = MqttHandler | undefined;
+type MqttProviderType = MqttHandler;
 
-export const MqttContext = createContext<MqttProviderType>(undefined);
+export const MqttContext = createContext<MqttProviderType>(mqttHandler);
 
 const MqttProvider: FC<Props> = (props) => {
-  const [mqttService] = useState<MqttProviderType>(new MqttHandler());
+  const [mqttService] = useState<MqttProviderType>(mqttHandler);
 
   return (
     <MqttContext.Provider value={mqttService}>
