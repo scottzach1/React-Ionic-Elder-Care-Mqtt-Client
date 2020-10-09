@@ -58,7 +58,7 @@ const SeniorTab: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <SeniorLocationCard lastSeenEvent={lastSeenLocation}/>
-        <SeniorLocationsGraph/>
+        <SeniorLocationsGraph totals={locationCounts}/>
       </IonContent>
     </IonPage>
   );
