@@ -1,5 +1,5 @@
 import {Plugins} from '@capacitor/core';
-import {MqttEvent} from "../services/MqttHandler";
+import {MqttEvent, MqttEventFromJson, MqttEventFromObj} from "../services/MqttHandler";
 
 const {Storage} = Plugins;
 
@@ -55,9 +55,11 @@ export const initStorage = async () => {
  *
  * @param key - the key to lookup local storage.
  */
-export const getEvents = async (key: string) => {
+export const getEvents = async (key: string): Promise<MqttEvent[] | null> => {
   const result = await Storage.get({key: key});
-  return (result.value) ? JSON.parse(result.value) : null;
+  if (!result.value) return null;
+  let array = JSON.parse(result.value);
+  return array.map((val: any) => new MqttEventFromObj(val));
 }
 
 /**
@@ -118,6 +120,7 @@ export const updateLastEvent = async (event: MqttEvent) => {
 /**
  * Gets the last event stored within local storage.
  */
-export const getLastEvent = async () => {
-  return await Storage.get({key: StorageOtherKeys.lastEvent});
+export const getLastEvent = async (): Promise<MqttEvent | any> => {
+  const resp = await Storage.get({key: StorageOtherKeys.lastEvent});
+  return (resp.value) ? new MqttEventFromJson(resp.value) : null;
 }

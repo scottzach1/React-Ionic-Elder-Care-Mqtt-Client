@@ -3,7 +3,8 @@ import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react
 import './SeniorTab.css';
 import SeniorLocationCard from "../components/senior/SeniorLocationCard";
 import SeniorLocationsGraph from "../components/senior/SeniorLocationsGraph";
-import mqttHandler, {MqttEvent} from "../services/MqttHandler";
+import {MqttEvent, mqttHandler} from "../services/MqttHandler";
+import {getLastEvent} from "../external/StorageManager";
 
 const SeniorTab: React.FC = () => {
   const [lastSeenLocation, setLastSeenLocation] = useState<MqttEvent>();
@@ -18,6 +19,8 @@ const SeniorTab: React.FC = () => {
     // Detach when unmount
     return () => mqttHandler.messageSubject.detach(onNewMessage);
   }, []);
+
+  if (!lastSeenLocation) getLastEvent().then((event) => setLastSeenLocation(event));
 
   return (
     <IonPage>

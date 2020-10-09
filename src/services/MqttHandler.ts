@@ -22,7 +22,7 @@ export class MqttHandler {
   }
 
   private onMessageArrived = async (message: Paho.Message) => {
-    const event = new MqttEvent(message.payloadString);
+    const event = new MqttEventFromString(message.payloadString);
     const key = getEventKey(event.sensorLocation);
 
     await appendEvents(key, event);
@@ -43,7 +43,14 @@ export type MqttLocationStrict = 'living' | 'kitchen' | 'dining' | 'toilet' | 'b
 export type MqttLocation = MqttLocationStrict | string;
 export type MqttStatus = 0 | 1;
 
-export class MqttEvent {
+export interface MqttEvent {
+  timestamp: Date | undefined,
+  sensorLocation: MqttLocation,
+  motionStatus: MqttStatus,
+  batteryStatus: number,
+}
+
+export class MqttEventFromString implements MqttEvent {
   public timestamp: Date | undefined;
   public sensorLocation: MqttLocation;
   public motionStatus: MqttStatus;
@@ -71,6 +78,42 @@ export class MqttEvent {
   }
 }
 
+export class MqttEventFromJson implements MqttEvent {
+  public timestamp: Date | undefined;
+  public sensorLocation: MqttLocation;
+  public motionStatus: MqttStatus;
+  public batteryStatus: number;
+
+  constructor(payload: string) {
+    const {timestamp, sensorLocation, motionStatus, batteryStatus} = JSON.parse(payload);
+
+    if (typeof timestamp === 'string')
+      this.timestamp = new Date(timestamp);
+
+    this.sensorLocation = (typeof sensorLocation === 'string') ? sensorLocation : 'Unknown';
+    this.motionStatus = (motionStatus) ? 1 : 0;
+    this.batteryStatus = (typeof batteryStatus === 'number') ? batteryStatus : -1;
+  }
+}
+
+export class MqttEventFromObj implements MqttEvent {
+  public timestamp: Date | undefined;
+  public sensorLocation: MqttLocation;
+  public motionStatus: MqttStatus;
+  public batteryStatus: number;
+
+  constructor(payload: any) {
+    const {timestamp, sensorLocation, motionStatus, batteryStatus} = payload;
+
+    if (typeof timestamp === 'string')
+      this.timestamp = new Date(timestamp);
+
+    this.sensorLocation = (typeof sensorLocation === 'string') ? sensorLocation : 'Unknown';
+    this.motionStatus = (motionStatus) ? 1 : 0;
+    this.batteryStatus = (typeof batteryStatus === 'number') ? batteryStatus : -1;
+  }
+}
+
 const mqttHandler = new MqttHandler();
 
-export default mqttHandler;
+export {mqttHandler};

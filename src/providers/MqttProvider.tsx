@@ -1,5 +1,5 @@
 import React, {createContext, FC, useState} from "react";
-import mqttHandler, {MqttHandler} from "../services/MqttHandler";
+import {mqttHandler, MqttHandler} from "../services/MqttHandler";
 
 interface Props {
 }
