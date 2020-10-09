@@ -10,7 +10,6 @@ interface Props {
 
 interface State {
   chartRef: RefObject<Bar>
-  // chartData: any,
 }
 
 class SeniorLocationsGraph extends Component<Props, State> {
@@ -19,7 +18,6 @@ class SeniorLocationsGraph extends Component<Props, State> {
 
     this.state = {
       chartRef: React.createRef(),
-      // chartData: null,
     }
   }
 

@@ -11,10 +11,11 @@ type LocationCounts = { [index: string]: number };
 const SeniorTab: React.FC = () => {
   const [lastSeenLocation, setLastSeenLocation] = useState<MqttEvent>();
   const [locationCounts, setLocationCounts] = useState<LocationCounts>();
+  const [eventToParse, setEventToParse] = useState<MqttEvent | undefined>();
 
   const onNewMessage = (event: MqttEvent) => {
     if (event.motionStatus) setLastSeenLocation(event);
-    if (locationCounts) locationCounts[event.sensorLocation] += 1;
+    setEventToParse(event);
   }
 
   useEffect(() => {
@@ -41,8 +42,22 @@ const SeniorTab: React.FC = () => {
     setLocationCounts(totals);
   }
 
+  // No last seen information, fetch from local storage.
   if (!lastSeenLocation) getLastEvent().then((event) => setLastSeenLocation(event));
+
+  // No local counts present, calculate from local storage.
   if (!locationCounts) countTotals().then();
+
+  // Outstanding event to parse, parse and update state.
+  if (locationCounts && eventToParse) {
+    // This is required, as within a `useEffect` callback, a useState such as `locationCounts` is undefined due to the
+    // different context. This is a workaround for this.
+    let newCounts = locationCounts;
+    newCounts[eventToParse.sensorLocation] += 1;
+    setLocationCounts(newCounts);
+    setEventToParse(undefined);
+  }
+
 
   return (
     <IonPage>
