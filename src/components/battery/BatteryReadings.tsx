@@ -1,6 +1,7 @@
 import React, {FC, useRef} from "react";
 import {IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle} from "@ionic/react";
 import {HorizontalBar} from "react-chartjs-2";
+import "chartjs-plugin-datalabels";
 
 export type BatteryReadingsType = { [index: string]: number };
 
@@ -21,6 +22,16 @@ const options = {
   legend: {
     display: true,
   },
+  plugins: {
+    datalabels: {
+      display: (ctx: any) => {
+        return !!(ctx); // true
+      },
+      formatter: (ctx: any, data: any) => {
+        return (ctx) ? `${ctx}%` : undefined;
+      }
+    }
+  }
 };
 
 const BatteryReadings: FC<Props> = (props) => {
@@ -36,7 +47,7 @@ const BatteryReadings: FC<Props> = (props) => {
     const red = (1 - decimal) * 255;
     const green = decimal * 255;
 
-    return `rgba(${red},${green},132,${(border) ? 1 : 0.2})`;
+    return `rgba(${red},${green},100,${(border) ? 1 : 0.2})`;
   }
 
   const parseData = () => {
@@ -86,7 +97,6 @@ const BatteryReadings: FC<Props> = (props) => {
         <HorizontalBar
             ref={chartRef}
             data={chartData}
-            type={'horizontal'}
             options={options}
         />
         }

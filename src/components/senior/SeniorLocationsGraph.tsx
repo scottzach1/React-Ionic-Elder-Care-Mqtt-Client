@@ -1,6 +1,7 @@
 import React, {FC, useRef} from "react";
 import {IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle} from "@ionic/react";
 import {Bar} from "react-chartjs-2";
+import "chartjs-plugin-datalabels";
 
 export type LocationCountsType = { [index: string]: number };
 
