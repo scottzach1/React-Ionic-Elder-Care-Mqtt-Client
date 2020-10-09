@@ -8,6 +8,21 @@ interface Props {
   totals?: BatteryReadingsType,
 }
 
+const options = {
+  scales: {
+    yAxes: [{
+      display: true,
+      ticks: {
+        beginsAtZero: true,
+        max: 1,
+      }
+    }]
+  },
+  legend: {
+    display: true,
+  },
+};
+
 const BatteryReadings: FC<Props> = (props) => {
   const chartRef = useRef(null);
 
@@ -72,20 +87,7 @@ const BatteryReadings: FC<Props> = (props) => {
             ref={chartRef}
             data={chartData}
             type={'horizontal'}
-            options={{
-              scales: {
-                yAxes: [{
-                  display: true,
-                  ticks: {
-                    beginsAtZero: true,
-                    max: 1,
-                  }
-                }]
-              },
-              legend: {
-                display: true,
-              },
-            }}
+            options={options}
         />
         }
       </IonCardContent>

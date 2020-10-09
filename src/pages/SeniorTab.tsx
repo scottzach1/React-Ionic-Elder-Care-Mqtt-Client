@@ -51,7 +51,7 @@ const SeniorTab: React.FC = () => {
   // Outstanding event to parse, parse and update state.
   if (locationCounts && eventToParse) {
     // This is required, as within a `useEffect` callback, a useState such as `locationCounts` is undefined due to the
-    // different context. This is a workaround for this.
+    // different context. I could not figure out how to add as a dependency for the callback function.
     let newCounts = locationCounts;
     newCounts[eventToParse.sensorLocation] += 1;
     setLocationCounts(newCounts);
