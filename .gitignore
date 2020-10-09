@@ -18,3 +18,4 @@ app/scripts/configuration.js
 
 # Additionally
 .idea/
+/.env.local

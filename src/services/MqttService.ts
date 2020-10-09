@@ -14,12 +14,12 @@ type MqttServiceStatus = 'Disconnected' | 'Disconnecting' | 'Connecting' | 'Conn
 export class MqttService {
   private status: MqttServiceStatus = 'Disconnected';
   private client: Paho.Client | undefined;
-  private message: Paho.Message | undefined;
-  private messageToSend: string = '';
+
+  private onMessageArrivedHandler: Paho.OnMessageHandler | undefined;
+  private onFailureHandler: Paho.OnFailureCallback | undefined;
 
   constructor() {
-    console.log('mqtt service started');
-    this.connect();
+    if (process.env.DEBUG) console.log('mqtt service started');
   }
 
   public disconnect() {
@@ -37,7 +37,7 @@ export class MqttService {
     this.status = 'Connecting';
     this.client = new Paho.Client(address, port, path, clientId);
 
-    console.log('connecting to mqtt via websocket');
+    if (process.env.DEBUG) console.log('connecting to mqtt via websocket');
     this.client.connect({
       timeout: 10,
       useSSL: false,
@@ -49,26 +49,20 @@ export class MqttService {
     this.client.onMessageArrived = this.onMessageArrived;
   }
 
-  public sendMessage() {
-    if (this.status !== 'Connected') return;
-    assert(this.client);
-
-    const message = new Paho.Message(this.messageToSend);
-    this.client?.send(message);
-  }
-
   public onConnect = () => {
     const {topic} = MqttConfig;
     assert(this.client);
 
-    console.log('connected to mqtt');
+    if (process.env.DEBUG) console.log('connected to mqtt');
     this.status = 'Connected';
     this.client.subscribe(topic);
   }
 
   public onFailure = (error: Paho.ErrorWithInvocationContext) => {
-    console.log('failed to connect to mqtt', error);
+    if (process.env.DEBUG) console.log('failed to connect to mqtt', error);
     this.status = 'Disconnected';
+
+    if (this.onFailureHandler) this.onFailureHandler(error);
   }
 
   public onConnectionLost = (error: Paho.MQTTError) => {
@@ -77,39 +71,16 @@ export class MqttService {
   }
 
   public onMessageArrived = (message: Paho.Message) => {
-    console.log('received message', message);
-    this.message = message;
-    console.log('event', new MqttEvent(message.payloadString));
+    if (process.env.DEBUG) console.log('received message', message);
+
+    if (this.onMessageArrivedHandler) this.onMessageArrivedHandler(message);
   }
-}
 
-type MqttLocation = 'living' | 'kitchen' | 'dining' | 'toilet' | 'bedroom' | string;
-type MqttStatus = 0 | 1;
+  public setOnMessageArrivedHandler(callback: Paho.OnMessageHandler) {
+    this.onMessageArrivedHandler = callback;
+  }
 
-class MqttEvent {
-  public timestamp: Date | undefined;
-  public sensorLocation: MqttLocation;
-  public motionStatus: MqttStatus;
-  public batteryStatus: number;
-
-  constructor(payload: string) {
-    // Parse CSV
-    const data = payload.split(',');
-
-    // Timestamp
-    try {
-      this.timestamp = new Date(data[0]);
-    } catch (e) {
-      console.error('Failed to parse date', e);
-    }
-
-    // Sensor Location
-    this.sensorLocation = data[1];
-
-    // Motion Status
-    this.motionStatus = (parseInt(data[2]) > 0) ? 1 : 0;
-
-    // Battery Status
-    this.batteryStatus = parseInt(data[3]);
+  public setOnFailureHandler(callback: Paho.OnFailureCallback) {
+    this.onFailure = callback;
   }
 }
