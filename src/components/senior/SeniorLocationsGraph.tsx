@@ -9,6 +9,12 @@ interface Props {
   totals?: LocationCountsType,
 }
 
+const options = {
+  legend: {
+    display: false,
+  },
+};
+
 const SeniorLocationsGraph: FC<Props> = (props) => {
   const chartRef = useRef(null);
 
@@ -56,6 +62,7 @@ const SeniorLocationsGraph: FC<Props> = (props) => {
         <Bar
             ref={chartRef}
             data={chartData}
+            options={options}
         />
         }
       </IonCardContent>

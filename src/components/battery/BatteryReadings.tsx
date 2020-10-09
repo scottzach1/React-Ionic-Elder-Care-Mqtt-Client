@@ -20,7 +20,7 @@ const options = {
     }]
   },
   legend: {
-    display: true,
+    display: false,
   },
   plugins: {
     datalabels: {
