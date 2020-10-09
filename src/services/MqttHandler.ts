@@ -26,7 +26,7 @@ export class MqttHandler {
     const key = getEventKey(event.sensorLocation);
 
     await appendEvents(key, event);
-    await updateLastEvent(event);
+    if (event.motionStatus) await updateLastEvent(event);
 
     this.messageSubject.notify(event);
 

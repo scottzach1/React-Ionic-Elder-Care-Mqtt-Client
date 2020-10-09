@@ -1,18 +1,31 @@
-import {FC} from "react";
+import React, {FC} from "react";
 import {IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle} from "@ionic/react";
-import React from "react";
+import {MqttEvent} from "../../services/MqttHandler";
+import {formatDistanceToNow} from 'date-fns';
 
 interface Props {
-  lastSeenLocation: string,
-  mins: number,
+  lastSeenEvent: MqttEvent | undefined,
 }
 
 const SeniorLocationCard: FC<Props> = (props) => {
+  const {lastSeenEvent} = props;
+
+  let timeAgo;
+  let location: string;
+
+  if (lastSeenEvent) {
+    timeAgo = (lastSeenEvent.timestamp) ? `${formatDistanceToNow(lastSeenEvent.timestamp)} ago` : 'time unknown';
+    location = lastSeenEvent.sensorLocation;
+  } else {
+    location = 'Unknown';
+    timeAgo = 'time unknown';
+  }
+
   return (
     <IonCard>
       <IonCardHeader>
         <IonCardTitle>
-          {props.lastSeenLocation} - {props.mins}m ago.
+          {location} - {timeAgo}.
         </IonCardTitle>
         <IonCardSubtitle>
           Last seen location

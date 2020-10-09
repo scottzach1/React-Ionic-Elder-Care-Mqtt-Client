@@ -6,10 +6,10 @@ import SeniorLocationsGraph from "../components/senior/SeniorLocationsGraph";
 import mqttHandler, {MqttEvent} from "../services/MqttHandler";
 
 const SeniorTab: React.FC = () => {
-  const [latestMessage, setLatestMessage] = useState<MqttEvent>();
+  const [lastSeenLocation, setLastSeenLocation] = useState<MqttEvent>();
 
   const onNewMessage = (event: MqttEvent) => {
-    setLatestMessage(event);
+    if (event.motionStatus) setLastSeenLocation(event);
   }
 
   useEffect(() => {
@@ -18,8 +18,6 @@ const SeniorTab: React.FC = () => {
     // Detach when unmount
     return () => mqttHandler.messageSubject.detach(onNewMessage);
   }, []);
-
-  const latestLocation = (latestMessage) ? latestMessage.sensorLocation : 'Unknown';
 
   return (
     <IonPage>
@@ -34,7 +32,7 @@ const SeniorTab: React.FC = () => {
             <IonTitle size="large">Senior Tab</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <SeniorLocationCard lastSeenLocation={latestLocation} mins={5}/>
+        <SeniorLocationCard lastSeenEvent={lastSeenLocation}/>
         <SeniorLocationsGraph/>
       </IonContent>
     </IonPage>
