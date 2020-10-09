@@ -1,4 +1,4 @@
-import React, {Component, RefObject} from "react";
+import React, {FC, useRef} from "react";
 import {IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle} from "@ionic/react";
 import {Bar} from "react-chartjs-2";
 
@@ -8,25 +8,11 @@ interface Props {
   totals?: LocationCountsType,
 }
 
-interface State {
-  chartRef: RefObject<Bar>
-}
+const SeniorLocationsGraph: FC<Props> = (props) => {
+  const chartRef = useRef(null);
 
-class SeniorLocationsGraph extends Component<Props, State> {
-  constructor(props: Readonly<Props>) {
-    super(props);
-
-    this.state = {
-      chartRef: React.createRef(),
-    }
-  }
-
-  componentDidMount() {
-    console.log('reference', this.state.chartRef);
-  }
-
-  parseData() {
-    const {totals} = this.props;
+  const parseData = () => {
+    const {totals} = props;
 
     if (!totals) return;
 
@@ -41,7 +27,7 @@ class SeniorLocationsGraph extends Component<Props, State> {
         hoverBorderColor: 'rgba(255,99,132,1)',
         data: []
       }],
-    };
+    }
 
     for (let key in totals) {
       if (!totals.hasOwnProperty(key) || typeof totals[key] !== "number") continue;
@@ -49,36 +35,31 @@ class SeniorLocationsGraph extends Component<Props, State> {
       data.datasets[0].data.push(totals[key]);
     }
 
-    console.log({data});
-
     return data;
-  }
+  };
 
-  render() {
-    const {chartRef} = this.state;
-    const chartData = this.parseData();
+  const chartData = parseData();
 
-    return (
-      <IonCard>
-        <IonCardHeader>
-          <IonCardTitle>
-            Locations Seen
-          </IonCardTitle>
-          <IonCardSubtitle>
-            Totals for each location hits in last 'n' amount of time.
-          </IonCardSubtitle>
-        </IonCardHeader>
-        <IonCardContent>
-          {chartData &&
-          <Bar
-              ref={chartRef}
-              data={chartData}
-          />
-          }
-        </IonCardContent>
-      </IonCard>
-    );
-  }
+  return (
+    <IonCard>
+      <IonCardHeader>
+        <IonCardTitle>
+          Locations Seen
+        </IonCardTitle>
+        <IonCardSubtitle>
+          Totals for each location hits in last 'n' amount of time.
+        </IonCardSubtitle>
+      </IonCardHeader>
+      <IonCardContent>
+        {chartData &&
+        <Bar
+            ref={chartRef}
+            data={chartData}
+        />
+        }
+      </IonCardContent>
+    </IonCard>
+  );
 }
 
 export default SeniorLocationsGraph;
