@@ -1,12 +1,14 @@
 import {Plugins} from '@capacitor/core';
 import {MqttEvent, MqttEventFromJson, MqttEventFromObj} from "../services/MqttHandler";
+import {PushNotificationsState} from "./PushNotifications";
+import {isDate} from "date-fns";
 
 const {Storage} = Plugins;
 
 /**
  * Keys used to index all values handled by this storage manager.
  */
-export const StorageEventKeys: { [index: string]: string } = {
+export const StorageEventIndexKeys: { [index: string]: string } = {
   bedroom: '@bedroomEvents',
   living: '@livingEvents',
   toilet: '@toiletEvents',
@@ -16,7 +18,8 @@ export const StorageEventKeys: { [index: string]: string } = {
 }
 
 export const StorageOtherKeys = {
-  lastEvent: '@lastEvent',
+  lastSeenEvent: '@lastSeenEvent',
+  userSettings: '@userSettings',
 }
 
 //// EVENT HELPER FUNCTIONS ////
@@ -28,9 +31,9 @@ export const StorageOtherKeys = {
  * @param key - the key to index within local storage.
  */
 export const getEventKey = (key: string) => {
-  const storageKey = StorageEventKeys[key];
+  const storageKey = StorageEventIndexKeys[key];
 
-  return (storageKey) ? storageKey : StorageEventKeys.other;
+  return (storageKey) ? storageKey : StorageEventIndexKeys.other;
 }
 
 /**
@@ -41,8 +44,8 @@ export const getEventKey = (key: string) => {
 export const initStorage = async () => {
   const promises: Promise<any>[] = [];
 
-  for (let key in StorageEventKeys) {
-    const storageKey = StorageEventKeys[key];
+  for (let key in StorageEventIndexKeys) {
+    const storageKey = StorageEventIndexKeys[key];
     if (await getEvents(storageKey)) continue;
 
     promises.push(setEvents(storageKey, []));
@@ -114,8 +117,8 @@ export const clearEvents = async (key: string) => {
 export const clearAllEvents = async () => {
   const promises: Promise<any>[] = [];
 
-  for (let key in StorageEventKeys) {
-    const storageKey = StorageEventKeys[key];
+  for (let key in StorageEventIndexKeys) {
+    const storageKey = StorageEventIndexKeys[key];
     promises.push(clearEvents(storageKey));
   }
 
@@ -129,7 +132,7 @@ export const clearAllEvents = async () => {
  */
 export const updateLastEvent = async (event: MqttEvent) => {
   await Storage.set({
-    key: StorageOtherKeys.lastEvent,
+    key: StorageOtherKeys.lastSeenEvent,
     value: JSON.stringify(event)
   });
 }
@@ -138,6 +141,55 @@ export const updateLastEvent = async (event: MqttEvent) => {
  * Gets the last event stored within local storage.
  */
 export const getLastEvent = async (): Promise<MqttEvent | any> => {
-  const resp = await Storage.get({key: StorageOtherKeys.lastEvent});
+  const resp = await Storage.get({key: StorageOtherKeys.lastSeenEvent});
   return (resp.value) ? new MqttEventFromJson(resp.value) : null;
+}
+
+
+//// USER PREFERENCES FUNCTIONS ////
+export interface Settings {
+  dataExpirationAge: Duration,
+  muteStatus: PushNotificationsState,
+}
+
+function isSettings(obj: any): obj is Settings {
+  const {dataExpirationAge, muteStatus} = obj;
+
+  return obj && typeof obj === 'object' &&
+    typeof dataExpirationAge === 'object' &&
+    (isDate(muteStatus) || typeof obj === 'string');
+}
+
+export const initUserPreferences = async (): Promise<Settings> => {
+  // Construct default object.
+  const settings: Settings = {
+    dataExpirationAge: {
+      years: 1,
+    },
+    muteStatus: 'enable',
+  }
+  // Wait and update storage.
+  await Storage.set({
+    key: StorageOtherKeys.userSettings,
+    value: JSON.stringify(settings)
+  }).catch((e) => console.error('Failed to store new settings', e));
+  // Return stored value.
+  return settings;
+}
+
+export const getUserPreferences = async (): Promise<Settings> => {
+  const resp = await Storage.get({key: StorageOtherKeys.userSettings});
+  const settings = JSON.parse((resp.value) ? resp.value : 'INVALID');
+
+  return (isSettings(settings)) ? settings : await initUserPreferences();
+}
+
+export const setUserPreferences = async (settings: Settings): Promise<Settings> => {
+  // Wait and update storage.
+  await Storage.set({
+    key: StorageOtherKeys.userSettings,
+    value: JSON.stringify(settings)
+  }).catch((e) => console.error('Failed to store new settings', e));
+  // Return stored value.
+  return settings;
 }

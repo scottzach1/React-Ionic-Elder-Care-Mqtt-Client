@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import BatteryReadingsChart, {BatteryReadingsType} from "../components/battery/BatteryReadingsChart";
 import MqttHandler, {MqttEvent} from "../services/MqttHandler";
-import {getEvents, StorageEventKeys} from "../external/StorageManager";
+import {getEvents, StorageEventIndexKeys} from "../external/StorageManager";
 import BatteryTrendChart, {BatteryTrendsType} from "../components/battery/BatteryTrendChart";
 
 const BatteryTab: React.FC = () => {
@@ -25,8 +25,8 @@ const BatteryTab: React.FC = () => {
       let totals: BatteryReadingsType = {};
       let promises: Promise<void>[] = [];
 
-      for (let key in StorageEventKeys) {
-        const storageKey = StorageEventKeys[key];
+      for (let key in StorageEventIndexKeys) {
+        const storageKey = StorageEventIndexKeys[key];
         const promise = getEvents(storageKey).then((res) => {
           // Read battery reading from last event.
           totals[key] = (res?.length) ? res[res.length - 1].batteryStatus : 0;
@@ -43,8 +43,8 @@ const BatteryTab: React.FC = () => {
       let trends: BatteryTrendsType = {};
       let promises: Promise<void>[] = [];
 
-      for (let key in StorageEventKeys) {
-        const storageKey = StorageEventKeys[key];
+      for (let key in StorageEventIndexKeys) {
+        const storageKey = StorageEventIndexKeys[key];
         const promise = getEvents(storageKey).then((res) => {
           trends[key] = (res?.length) ? res : [];
         });

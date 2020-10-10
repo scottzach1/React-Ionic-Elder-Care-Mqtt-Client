@@ -3775,7 +3775,14 @@ data-urls@^1.0.0, data-urls@^1.1.0:
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
 
-date-fns@^2.16.1:
+date-fns-duration@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/date-fns-duration/-/date-fns-duration-1.0.3.tgz#d72c6949ad8334cae88178d3cc6b37e139dc912d"
+  integrity sha512-OU42MCnTIY5hrbZEy7MyinRIQI3OkjoEWmos1IC5//CyUseeCa4RK9aUdIHbw+xhekP9/CvLeGtxLiYb+y5QKw==
+  dependencies:
+    date-fns "^2.0.1"
+
+date-fns@^2.0.1, date-fns@^2.16.1:
   version "2.16.1"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.16.1.tgz#05775792c3f3331da812af253e1a935851d3834b"
   integrity sha512-sAJVKx/FqrLYHAQeN7VpJrPhagZc9R4ImZIWYRFZaaohR3KzmuK88touwsSwSVT8Qcbd4zoDsnGfX4GFB4imyQ==

@@ -3,7 +3,7 @@ import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react
 import SeniorLocationCard from "../components/senior/SeniorLocationCard";
 import SeniorLocationsGraph from "../components/senior/SeniorLocationsGraph";
 import MqttHandler, {MqttEvent} from "../services/MqttHandler";
-import {getEvents, getLastEvent, StorageEventKeys} from "../external/StorageManager";
+import {getEvents, getLastEvent, StorageEventIndexKeys} from "../external/StorageManager";
 
 type LocationCounts = { [index: string]: number };
 
@@ -28,8 +28,8 @@ const SeniorTab: React.FC = () => {
     let totals: LocationCounts = {};
     let promises: Promise<void>[] = [];
 
-    for (let key in StorageEventKeys) {
-      const storageKey = StorageEventKeys[key];
+    for (let key in StorageEventIndexKeys) {
+      const storageKey = StorageEventIndexKeys[key];
       const promise = getEvents(storageKey).then((res) => {
         totals[key] = (res) ? res.filter((ev) => ev.motionStatus).length : 0
       });
