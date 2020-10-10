@@ -107,6 +107,22 @@ export const clearEvents = async (key: string) => {
 }
 
 /**
+ * Clears events for all storage keys.
+ *
+ * Note: This will reset the corresponding value to an empty array `[]`.
+ */
+export const clearAllEvents = async () => {
+  const promises: Promise<any>[] = [];
+
+  for (let key in StorageEventKeys) {
+    const storageKey = StorageEventKeys[key];
+    promises.push(clearEvents(storageKey));
+  }
+
+  await Promise.all(promises);
+}
+
+/**
  * Updates the last event within local storage.
  *
  * @param event - the event to store as 'last even' persistently.

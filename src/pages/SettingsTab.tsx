@@ -1,7 +1,7 @@
 import React from 'react';
-import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
+import {IonCard, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import './SettingsTab.css';
+import SettingsClearStorageItem from "../components/settings/ClearEventsEntry";
 
 const SettingsTab: React.FC = () => {
   return (
@@ -17,7 +17,14 @@ const SettingsTab: React.FC = () => {
             <IonTitle size="large">Settings Tab</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <ExploreContainer name="Settings Tab page"/>
+        <IonCard>
+          <IonCardHeader>
+            <IonCardTitle>
+              General
+            </IonCardTitle>
+          </IonCardHeader>
+          <SettingsClearStorageItem/>
+        </IonCard>
       </IonContent>
     </IonPage>
   );

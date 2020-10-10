@@ -32,7 +32,7 @@ const SeniorTab: React.FC = () => {
     for (let key in StorageEventKeys) {
       const storageKey = StorageEventKeys[key];
       const promise = getEvents(storageKey).then((res) => {
-        totals[key] = (res) ? res.length : 0
+        totals[key] = (res) ? res.filter((ev) => ev.motionStatus).length : 0
       });
       promises.push(promise);
     }
