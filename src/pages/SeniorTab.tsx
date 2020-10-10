@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
-import './SeniorTab.css';
 import SeniorLocationCard from "../components/senior/SeniorLocationCard";
 import SeniorLocationsGraph from "../components/senior/SeniorLocationsGraph";
 import MqttHandler, {MqttEvent} from "../services/MqttHandler";

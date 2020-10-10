@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
-import './BatteryTab.css';
 import BatteryReadingsChart, {BatteryReadingsType} from "../components/battery/BatteryReadingsChart";
 import MqttHandler, {MqttEvent} from "../services/MqttHandler";
 import {getEvents, StorageEventKeys} from "../external/StorageManager";
