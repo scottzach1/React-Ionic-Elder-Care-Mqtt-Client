@@ -9,6 +9,7 @@ export type BatteryTrendsType = { [index: string]: MqttEvent[] }
 
 interface Props {
   trends?: BatteryTrendsType,
+  numberOfReadings?: number, // default 20
 }
 
 const options = {
@@ -43,6 +44,7 @@ const labelColors: { [index: string]: Rgb } = {};
 
 const BatteryTrendChart: FC<Props> = (props) => {
   const chartRef = useRef(null);
+  const {numberOfReadings} = props;
 
   const getRGB = (key: string): Rgb => {
     if (labelColors[key]) return labelColors[key];
@@ -86,13 +88,10 @@ const BatteryTrendChart: FC<Props> = (props) => {
         data: []
       }
 
-      data.labels.push(key);
-
-      for (let event of events) {
-        if (!event.timestamp) continue;
+      for (let event of events.slice(events.length - ((numberOfReadings) ? numberOfReadings : 20))) {
         const {timestamp, batteryStatus} = event;
 
-        if (!timestamp) continue;
+        if (!timestamp) break;
 
         dataset.data.push({
           x: timestamp,
