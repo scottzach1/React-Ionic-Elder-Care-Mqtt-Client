@@ -1,6 +1,7 @@
 import React from 'react';
 import {IonCard, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import SettingsClearStorageItem from "../components/settings/SettingsClearStorageItem";
+import SettingsNotificationItem from "../components/settings/SettingsNotificationItem";
 
 const SettingsTab: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const SettingsTab: React.FC = () => {
             </IonCardTitle>
           </IonCardHeader>
           <SettingsClearStorageItem/>
+          <SettingsNotificationItem/>
         </IonCard>
       </IonContent>
     </IonPage>

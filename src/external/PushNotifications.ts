@@ -2,14 +2,22 @@ import {Plugins} from '@capacitor/core';
 
 const {LocalNotifications} = Plugins;
 
+export type PushNotificationsState = 'mute' | 'enable' | Date;
+
 /**
  * <https://blog.chinaza.dev/ionic-react-local-notifications-using-capacitor-ckc8dv3p400byvms1d2wqcq6h>
  */
 class PushNotifications {
   static counter = 0;
 
+  public muteUntil: PushNotificationsState = 'enable';
+
   public async notifyBatteryEvent(event: NotifyEvent) {
     const {title, body} = event;
+    const {muteUntil} = this;
+
+    // Check that we aren't currently muted.
+    if (muteUntil !== 'enable' && (muteUntil === 'mute' || muteUntil > new Date())) return;
 
     try {
       // Request/ check permissions

@@ -2,7 +2,7 @@ import MqttHandler, {MqttEvent} from "./MqttHandler";
 import PushNotifications from "../external/PushNotifications";
 
 class BatteryMonitor {
-  public threshold: number = 0;
+  public threshold: number = 20;
 
   constructor() {
     MqttHandler.messageSubject.attach(this.messageHandler);
