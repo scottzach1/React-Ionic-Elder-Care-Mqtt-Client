@@ -42,9 +42,10 @@ export const initStorage = async () => {
   const promises: Promise<any>[] = [];
 
   for (let key in StorageEventKeys) {
-    if (await getEvents(key)) continue;
+    const storageKey = StorageEventKeys[key];
+    if (await getEvents(storageKey)) continue;
 
-    promises.push(setEvents(key, []));
+    promises.push(setEvents(storageKey, []));
   }
 
   await Promise.all(promises);

@@ -34,7 +34,7 @@ const options = {
   }
 };
 
-const BatteryReadings: FC<Props> = (props) => {
+const BatteryReadingsChart: FC<Props> = (props) => {
   const chartRef = useRef(null);
 
   const calculateColor = (percent: number, border: boolean) => {
@@ -105,4 +105,4 @@ const BatteryReadings: FC<Props> = (props) => {
   );
 }
 
-export default BatteryReadings;
+export default BatteryReadingsChart;
