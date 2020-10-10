@@ -6,6 +6,7 @@ import {accessibilityOutline, batteryFullOutline, settingsOutline} from 'ionicon
 import SeniorTab from './pages/SeniorTab';
 import BatteryTab from './pages/BatteryTab';
 import SettingsTab from './pages/SettingsTab';
+import "./services/BatteryMonitor";
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -27,7 +28,6 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 
 const App: React.FC = () => (
-  // <MqttProvider>
   <IonApp>
     <IonReactRouter>
       <IonTabs>
@@ -54,7 +54,6 @@ const App: React.FC = () => (
       </IonTabs>
     </IonReactRouter>
   </IonApp>
-  // </MqttProvider>
 );
 
 export default App;

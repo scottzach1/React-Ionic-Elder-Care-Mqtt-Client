@@ -6,7 +6,7 @@ import {ObserverSubject} from "./ObserverSubject";
 export class MqttHandler {
   private client: MqttService | undefined;
   public messageSubject = new ObserverSubject<MqttEvent>();
-  public failureSubject = new ObserverSubject<Paho.MQTTError>()
+  public failureSubject = new ObserverSubject<Paho.MQTTError>();
 
   public constructor() {
     // Ensure Storage Initialised before we connect.
@@ -114,6 +114,4 @@ export class MqttEventFromObj implements MqttEvent {
   }
 }
 
-const mqttHandler = new MqttHandler();
-
-export {mqttHandler};
+export default new MqttHandler();

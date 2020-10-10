@@ -3,7 +3,7 @@ import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react
 import './SeniorTab.css';
 import SeniorLocationCard from "../components/senior/SeniorLocationCard";
 import SeniorLocationsGraph from "../components/senior/SeniorLocationsGraph";
-import {MqttEvent, mqttHandler} from "../services/MqttHandler";
+import MqttHandler, {MqttEvent} from "../services/MqttHandler";
 import {getEvents, getLastEvent, StorageEventKeys} from "../external/StorageManager";
 
 type LocationCounts = { [index: string]: number };
@@ -19,10 +19,10 @@ const SeniorTab: React.FC = () => {
   }
 
   useEffect(() => {
-    mqttHandler.messageSubject.attach(onNewMessage);
+    MqttHandler.messageSubject.attach(onNewMessage);
 
     // Detach when unmount
-    return () => mqttHandler.messageSubject.detach(onNewMessage);
+    return () => MqttHandler.messageSubject.detach(onNewMessage);
   }, []);
 
   const countTotals = async () => {

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import './BatteryTab.css';
 import BatteryReadings, {BatteryReadingsType} from "../components/battery/BatteryReadings";
-import {MqttEvent, mqttHandler} from "../services/MqttHandler";
+import MqttHandler, {MqttEvent} from "../services/MqttHandler";
 import {getEvents, StorageEventKeys} from "../external/StorageManager";
 
 const BatteryTab: React.FC = () => {
@@ -14,10 +14,10 @@ const BatteryTab: React.FC = () => {
   }
 
   useEffect(() => {
-    mqttHandler.messageSubject.attach(onNewMessage);
+    MqttHandler.messageSubject.attach(onNewMessage);
 
     // Detach when unmount
-    return () => mqttHandler.messageSubject.detach(onNewMessage);
+    return () => MqttHandler.messageSubject.detach(onNewMessage);
   }, []);
 
   const countTotals = async () => {
@@ -55,13 +55,13 @@ const BatteryTab: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Tab 2</IonTitle>
+          <IonTitle>Battery Tab</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Tab 2</IonTitle>
+            <IonTitle size="large">Battery Tab</IonTitle>
           </IonToolbar>
         </IonHeader>
         <BatteryReadings totals={batteryLevels}/>
