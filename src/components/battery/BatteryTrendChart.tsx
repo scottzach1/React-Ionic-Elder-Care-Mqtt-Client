@@ -1,5 +1,5 @@
 import {MqttEvent} from "../../services/MqttHandler";
-import React, {FC, useRef} from "react";
+import React, {FC, useRef, useState} from "react";
 import {IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle} from "@ionic/react";
 import {Line} from "react-chartjs-2";
 import "chartjs-plugin-datalabels";
@@ -10,15 +10,6 @@ export type BatteryTrendsType = { [index: string]: MqttEvent[] }
 interface Props {
   trends?: BatteryTrendsType,
 }
-
-/**
- * Useful links:
- * <https://codepen.io/k3no/pen/pbYGVa>
- * <https://www.chartjs.org/docs/latest/charts/line.html>
- * <https://github.com/jerairrest/react-chartjs-2>
- * <https://www.chartjs.org/docs/latest/axes/cartesian/time.html?h=date>
- * <https://stackoverflow.com/questions/47875045/chart-js-creating-a-line-graph-using-dates>
- */
 
 const options = {
   scales: {
@@ -46,8 +37,32 @@ const options = {
   }
 }
 
+type Rgb = { red: number, green: number, blue: number };
+
+const labelColors: { [index: string]: Rgb } = {};
+
 const BatteryTrendChart: FC<Props> = (props) => {
   const chartRef = useRef(null);
+  // const [labelColors, setLabelColors] = useState<{ [index: string]: Rgb }>({});
+
+  const getRGB = (key: string): Rgb => {
+    if (labelColors[key]) return labelColors[key];
+
+    const offset = 100;
+
+    const red = offset + Math.round(Math.random() * (155));
+    const green = offset + Math.round(Math.random() * 155);
+    const blue = offset + Math.round(Math.random() * 155);
+
+    const rgb: Rgb = {red, green, blue};
+
+    // const newLabelColors = labelColors;
+    // newLabelColors[key] = rgb;
+    // setLabelColors(newLabelColors);
+    labelColors[key] = rgb;
+
+    return rgb;
+  }
 
   const parseData = () => {
     const {trends} = props;
@@ -59,48 +74,35 @@ const BatteryTrendChart: FC<Props> = (props) => {
       datasets: [],
     }
 
-    const defaultDataset: any = {
-      label: 'Unknown',
-      backgroundColor: [],
-      borderColor: [],
-      borderWidth: 1,
-      data: []
-    }
-
     for (let key in trends) {
       if (!trends.hasOwnProperty(key) || !Array.isArray(trends[key])) continue;
       const events = trends[key];
 
-      let dataset = {
-        ...defaultDataset,
-      };
+      const {red, green, blue} = getRGB(key);
+
+      let dataset: any = {
+        label: key,
+        borderWidth: 1,
+        pointHitRadius: 0,
+        backgroundColor: `rgba(${red},${green},${blue}, 0.2)`,
+        borderColor: `rgba(${red},${green},${blue},1)`,
+        hoverBackgroundColor: `rgba(${red},${green},${blue},0.5)`,
+        data: []
+      }
 
       data.labels.push(key);
-      dataset.label = key;
 
       for (let event of events) {
         if (!event.timestamp) continue;
         const {timestamp, batteryStatus} = event;
 
         dataset.data.push({
-          t: timestamp,
+          x: timestamp,
           y: batteryStatus,
         });
       }
 
-      const offset = 100;
-
-      const red = offset + Math.round(Math.random() * (155));
-      const green = offset + Math.round(Math.random() * 155);
-      const blue = offset + Math.round(Math.random() * 155);
-
-      dataset.backgroundColor = `rgba(${red},${green},${blue}, 0.2)`;
-      dataset.borderColor = `rgba(${red},${green},${blue},1)`;
-      dataset.hoverBackgroundColor = `rgba(${red},${green},${blue},0.5)`;
-
       data.datasets.push(dataset);
-
-      return data; // FIXME: current hack to render only one series
     }
 
     return data;
