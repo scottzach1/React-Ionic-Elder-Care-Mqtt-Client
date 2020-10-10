@@ -11,6 +11,15 @@ interface Props {
   trends?: BatteryTrendsType,
 }
 
+/**
+ * Useful links:
+ * <https://codepen.io/k3no/pen/pbYGVa>
+ * <https://www.chartjs.org/docs/latest/charts/line.html>
+ * <https://github.com/jerairrest/react-chartjs-2>
+ * <https://www.chartjs.org/docs/latest/axes/cartesian/time.html?h=date>
+ * <https://stackoverflow.com/questions/47875045/chart-js-creating-a-line-graph-using-dates>
+ */
+
 const options = {
   scales: {
     xAxes: [{
