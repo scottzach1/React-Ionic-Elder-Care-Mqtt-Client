@@ -6,89 +6,99 @@ import {getEvents, StorageEventKeys} from "../external/StorageManager";
 import BatteryTrendChart, {BatteryTrendsType} from "../components/battery/BatteryTrendChart";
 
 const BatteryTab: React.FC = () => {
-  const [batteryLevels, setBatteryLevels] = useState<BatteryReadingsType>();
-  const [batteryTrends, setBatteryTrends] = useState<BatteryTrendsType>();
-  const [eventToParse, setEventToParse] = useState<MqttEvent | undefined>();
+    const [batteryLevels, setBatteryLevels] = useState<BatteryReadingsType>();
+    const [batteryTrends, setBatteryTrends] = useState<BatteryTrendsType>();
+    const [eventToParse, setEventToParse] = useState<MqttEvent | undefined>();
 
-  const onNewMessage = (event: MqttEvent) => {
-    setEventToParse(event);
-  }
-
-  useEffect(() => {
-    MqttHandler.messageSubject.attach(onNewMessage);
-
-    // Detach when unmount
-    return () => MqttHandler.messageSubject.detach(onNewMessage);
-  }, []);
-
-  const countTotals = async () => {
-    let totals: BatteryReadingsType = {};
-    let promises: Promise<void>[] = [];
-
-    for (let key in StorageEventKeys) {
-      const storageKey = StorageEventKeys[key];
-      const promise = getEvents(storageKey).then((res) => {
-        // Read battery reading from last event.
-        totals[key] = (res?.length) ? res[res.length - 1].batteryStatus : 0;
-      });
-      promises.push(promise);
+    const onNewMessage = (event: MqttEvent) => {
+      setEventToParse(event);
     }
 
-    await Promise.all(promises);
+    useEffect(() => {
+      MqttHandler.messageSubject.attach(onNewMessage);
 
-    setBatteryLevels(totals);
-  }
+      // Detach when unmount
+      return () => MqttHandler.messageSubject.detach(onNewMessage);
+    }, []);
 
-  const calculateTrends = async () => {
-    let trends: BatteryTrendsType = {};
-    let promises: Promise<void>[] = [];
+    const countTotals = async () => {
+      let totals: BatteryReadingsType = {};
+      let promises: Promise<void>[] = [];
 
-    for (let key in StorageEventKeys) {
-      const storageKey = StorageEventKeys[key];
-      const promise = getEvents(storageKey).then((res) => {
-        trends[key] = (res?.length) ? res : [];
-      });
-      promises.push(promise);
+      for (let key in StorageEventKeys) {
+        const storageKey = StorageEventKeys[key];
+        const promise = getEvents(storageKey).then((res) => {
+          // Read battery reading from last event.
+          totals[key] = (res?.length) ? res[res.length - 1].batteryStatus : 0;
+        });
+        promises.push(promise);
+      }
+
+      await Promise.all(promises);
+
+      setBatteryLevels(totals);
     }
 
-    await Promise.all(promises);
+    const calculateTrends = async () => {
+      let trends: BatteryTrendsType = {};
+      let promises: Promise<void>[] = [];
 
-    setBatteryTrends(trends);
-  }
+      for (let key in StorageEventKeys) {
+        const storageKey = StorageEventKeys[key];
+        const promise = getEvents(storageKey).then((res) => {
+          trends[key] = (res?.length) ? res : [];
+        });
+        promises.push(promise);
+      }
 
-  // No local counts present, calculate from local storage.
-  if (!batteryLevels) countTotals().then();
+      await Promise.all(promises);
 
-  if (!batteryTrends) calculateTrends().then();
+      setBatteryTrends(trends);
+    }
 
-  // Outstanding event to parse, parse and update state.
-  if (batteryLevels && eventToParse) {
-    // This is required, as within a `useEffect` callback, a useState such as `locationCounts` is undefined due to the
-    // different context. This is a workaround for this.
-    let newCounts = batteryLevels;
-    newCounts[eventToParse.sensorLocation] = eventToParse.batteryStatus;
-    setBatteryLevels(newCounts);
-    setEventToParse(undefined);
-  }
+    // No local counts present, calculate from local storage.
+    if (!batteryLevels) countTotals().then();
 
-  return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Battery Tab</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent>
-        <IonHeader collapse="condense">
+    if (!batteryTrends) calculateTrends().then();
+
+    // Outstanding event to parse, parse and update state.
+    if (batteryLevels && eventToParse) {
+      // This is required, as within a `useEffect` callback, a useState such as `locationCounts` is undefined due to the
+      // different context. This is a workaround for this.
+      if (batteryLevels) {
+        let newCounts = batteryLevels;
+        newCounts[eventToParse.sensorLocation] = eventToParse.batteryStatus;
+        setBatteryLevels(newCounts);
+      }
+
+      if (batteryTrends) {
+        let newTrends = batteryTrends;
+        newTrends[eventToParse.sensorLocation].push(eventToParse);
+        setBatteryTrends(newTrends);
+      }
+
+      setEventToParse(undefined);
+    }
+
+    return (
+      <IonPage>
+        <IonHeader>
           <IonToolbar>
-            <IonTitle size="large">Battery Tab</IonTitle>
+            <IonTitle>Battery Tab</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <BatteryReadingsChart totals={batteryLevels}/>
-        <BatteryTrendChart trends={batteryTrends}/>
-      </IonContent>
-    </IonPage>
-  );
-};
+        <IonContent>
+          <IonHeader collapse="condense">
+            <IonToolbar>
+              <IonTitle size="large">Battery Tab</IonTitle>
+            </IonToolbar>
+          </IonHeader>
+          <BatteryReadingsChart totals={batteryLevels}/>
+          <BatteryTrendChart trends={batteryTrends}/>
+        </IonContent>
+      </IonPage>
+    );
+  }
+;
 
 export default BatteryTab;

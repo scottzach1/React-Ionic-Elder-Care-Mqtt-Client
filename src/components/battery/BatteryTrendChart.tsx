@@ -1,5 +1,5 @@
 import {MqttEvent} from "../../services/MqttHandler";
-import React, {FC, useRef, useState} from "react";
+import React, {FC, useRef} from "react";
 import {IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle} from "@ionic/react";
 import {Line} from "react-chartjs-2";
 import "chartjs-plugin-datalabels";
@@ -27,10 +27,10 @@ const options = {
   },
   plugins: {
     datalabels: {
-      display: (ctx: any) => {
+      display: (_ctx: any) => {
         return false; // true
       },
-      formatter: (ctx: any, data: any) => {
+      formatter: (ctx: any, _data: any) => {
         return (ctx) ? `${ctx}%` : undefined;
       }
     }
@@ -43,7 +43,6 @@ const labelColors: { [index: string]: Rgb } = {};
 
 const BatteryTrendChart: FC<Props> = (props) => {
   const chartRef = useRef(null);
-  // const [labelColors, setLabelColors] = useState<{ [index: string]: Rgb }>({});
 
   const getRGB = (key: string): Rgb => {
     if (labelColors[key]) return labelColors[key];
@@ -56,11 +55,7 @@ const BatteryTrendChart: FC<Props> = (props) => {
 
     const rgb: Rgb = {red, green, blue};
 
-    // const newLabelColors = labelColors;
-    // newLabelColors[key] = rgb;
-    // setLabelColors(newLabelColors);
     labelColors[key] = rgb;
-
     return rgb;
   }
 
@@ -76,6 +71,7 @@ const BatteryTrendChart: FC<Props> = (props) => {
 
     for (let key in trends) {
       if (!trends.hasOwnProperty(key) || !Array.isArray(trends[key])) continue;
+      if (!trends[key].length) continue;
       const events = trends[key];
 
       const {red, green, blue} = getRGB(key);
@@ -95,6 +91,8 @@ const BatteryTrendChart: FC<Props> = (props) => {
       for (let event of events) {
         if (!event.timestamp) continue;
         const {timestamp, batteryStatus} = event;
+
+        if (!timestamp) continue;
 
         dataset.data.push({
           x: timestamp,

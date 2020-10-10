@@ -1,6 +1,6 @@
 import React from 'react';
 import {IonCard, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
-import SettingsClearStorageItem from "../components/settings/ClearEventsEntry";
+import SettingsClearStorageItem from "../components/settings/SettingsClearStorageItem";
 
 const SettingsTab: React.FC = () => {
   return (
