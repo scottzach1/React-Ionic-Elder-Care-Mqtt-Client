@@ -5,8 +5,8 @@ import {IonReactRouter} from '@ionic/react-router';
 import {accessibilityOutline, batteryFullOutline, settingsOutline} from 'ionicons/icons';
 
 import './services/MqttManager';
-import './services/BatteryMonitor';
-import './services/InactivityMonitor';
+import './monitors/BatteryMonitor';
+import './monitors/InactivityMonitor';
 import SeniorTab from './pages/SeniorTab';
 import BatteryTab from './pages/BatteryTab';
 import SettingsTab from './pages/SettingsTab';

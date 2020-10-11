@@ -1,6 +1,6 @@
 import {Plugins} from '@capacitor/core';
 import {addDays, addMinutes, isDate} from "date-fns";
-import SettingsManager, {NotificationSettingState, Settings} from "./SettingsManager";
+import SettingsManager, {NotificationSettingState, Settings} from "../services/SettingsManager";
 import {ObserverSubject} from "../lib/ObserverSubject";
 
 export type NotificationOptions = 'Enable' | 'Mute' | 'Mute for 15 minutes' | 'Mute for a day';
@@ -28,7 +28,7 @@ class PushNotifications {
     return (this.state) ? this.state : await this.setState(newStatus);
   }
 
-  public checkState() {
+  public checkMuted() {
     const {state} = this;
     const muted = (state) && (isDate(state) && state > new Date());
     if (!muted && isDate(state)) {
@@ -65,7 +65,7 @@ class PushNotifications {
     const {title, body} = event;
 
     // Check that we aren't currently muted.
-    if (this.checkState()) return;
+    if (this.checkMuted()) return;
 
     try {
       // Request/ check permissions
@@ -103,7 +103,7 @@ class PushNotifications {
     // Schedule a callback to check the time on expire.
     if ((isDate(muteStatus) && muteStatus > new Date())) {
       setTimeout(() => {
-        this.checkState();
+        this.checkMuted();
       }, (new Date(muteStatus).getTime() - new Date().getTime()));
     }
   }

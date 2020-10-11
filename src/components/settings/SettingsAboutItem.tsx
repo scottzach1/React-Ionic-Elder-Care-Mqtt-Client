@@ -2,9 +2,12 @@ import React, {FC} from "react";
 import {IonIcon, IonItem, IonLabel} from "@ionic/react";
 import {logoReact} from "ionicons/icons";
 
-
+/**
+ * This component displays information about the app and developer within two
+ * `IonCard`s.
+ */
 const SettingsAboutItem: FC = () => {
-
+  // Render two cards within a single JSX container element.
   return (
     <>
       <IonItem>

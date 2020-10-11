@@ -2,16 +2,28 @@ import React, {FC} from "react";
 import {IonIcon, IonItem, IonLabel, IonSelect, IonSelectOption} from "@ionic/react";
 import {alertCircleOutline} from "ionicons/icons";
 import {Settings} from "../../services/SettingsManager";
-import InactivityMonitor from "../../services/InactivityMonitor";
+import InactivityMonitor from "../../monitors/InactivityMonitor";
 
 interface Props {
   settings?: Settings,
 }
 
+/**
+ * This component provides the user functionality to manually select the inactivity alert
+ * threshold, as well as outright disable it.
+ *
+ * TO handle state, this component does not store internal state, but instead updates dynamically
+ * based on the data shown within the settings prop.
+ *
+ * @param props - `Props` interface defined above.
+ */
 const SettingsInactivityThresholdItem: FC<Props> = (props) => {
   const {settings, children} = props;
   const mode = settings?.muteStatus;
 
+  /**
+   * Generate the options to show within the ion-select menu.
+   */
   const createOptions = () => {
     let options = [];
 
@@ -28,6 +40,9 @@ const SettingsInactivityThresholdItem: FC<Props> = (props) => {
     return options;
   }
 
+  /**
+   * Calculates the text to show within th placeholder location of the selector.
+   */
   const getText = () => {
     if (!settings) return 'Select Below';
     const {inactivityThreshold} = settings;
@@ -36,6 +51,8 @@ const SettingsInactivityThresholdItem: FC<Props> = (props) => {
     else return `${inactivityThreshold} Minutes`
   }
 
+  // Returns an `IonItem` containing an ion-select that cna be used to update the inactivity
+  // alert threshold.
   return (
     <>
       <IonItem>

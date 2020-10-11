@@ -9,12 +9,19 @@ interface Props {
   lastSeenEvent: MqttEvent | undefined,
 }
 
+/**
+ * This component displays information about the last location activity was detected. This is presented
+ * within an `IonCard` and contains both the location, the time of the event as well as an icon representing
+ * the respective location.
+ *
+ * @param props - `Props` interface defined above.
+ */
 const SeniorLocationCard: FC<Props> = (props) => {
   const {lastSeenEvent} = props;
 
-  let timeAgo;
-  let location: string;
+  let timeAgo: string, location: string;
 
+  // Calculate information to display based off provided event from props.
   if (lastSeenEvent) {
     timeAgo = (lastSeenEvent.timestamp) ? `${formatDistanceToNow(lastSeenEvent.timestamp)} ago` : 'time unknown';
     location = lastSeenEvent.sensorLocation;
@@ -23,8 +30,8 @@ const SeniorLocationCard: FC<Props> = (props) => {
     timeAgo = 'time unknown';
   }
 
+  // Select an appropriate icon based off location.
   let icon;
-
   switch (lastSeenEvent?.sensorLocation) {
     case "dining":
       icon = faUtensils;
@@ -48,6 +55,7 @@ const SeniorLocationCard: FC<Props> = (props) => {
 
   location = capitalizeFirstLetter(location);
 
+  // Return a card containing text and an icon forced to the right.
   return (
     <IonCard>
       <FontAwesomeIcon icon={icon} size={'8x'} style={{float: 'right', padding: '7px'}}/>

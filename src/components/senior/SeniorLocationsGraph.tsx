@@ -9,20 +9,25 @@ interface Props {
   totals?: LocationCountsType,
 }
 
-const options = {
-  legend: {
-    display: false,
-  },
-};
-
+/**
+ * This component displays a vertical bar chart containing the count totals for each location where
+ * activity has been observed. This is rendered within an `IonCard`.
+ * @param props
+ */
 const SeniorLocationsGraph: FC<Props> = (props) => {
+  // Chart ref to update.
   const chartRef = useRef(null);
 
+  /**
+   * Parses the data from props and generates valid data for reading within the chart below.
+   */
   const parseData = () => {
     const {totals} = props;
 
+    // No data to parse.
     if (!totals) return;
 
+    // Define basic structure to use.
     let data: any = {
       labels: [],
       datasets: [{
@@ -36,6 +41,7 @@ const SeniorLocationsGraph: FC<Props> = (props) => {
       }],
     }
 
+    // Iterate over each key injecting corresponding values into dataset.
     for (let key in totals) {
       if (!totals.hasOwnProperty(key) || typeof totals[key] !== "number") continue;
       data.labels.push(key);
@@ -45,8 +51,10 @@ const SeniorLocationsGraph: FC<Props> = (props) => {
     return data;
   };
 
+  // Parse data if present.
   const chartData = parseData();
 
+  // Return a card containing a horizontal bar chart of data.
   return (
     <IonCard>
       <IonCardHeader>
@@ -69,5 +77,12 @@ const SeniorLocationsGraph: FC<Props> = (props) => {
     </IonCard>
   );
 }
+
+// Constant options provided to graph above.
+const options = {
+  legend: {
+    display: false,
+  },
+};
 
 export default SeniorLocationsGraph;

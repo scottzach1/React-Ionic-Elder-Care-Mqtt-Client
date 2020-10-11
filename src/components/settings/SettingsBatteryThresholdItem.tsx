@@ -2,16 +2,28 @@ import React, {FC} from "react";
 import {IonIcon, IonItem, IonLabel, IonSelect, IonSelectOption} from "@ionic/react";
 import {batteryHalfOutline} from "ionicons/icons";
 import {Settings} from "../../services/SettingsManager";
-import BatteryMonitor from "../../services/BatteryMonitor";
+import BatteryMonitor from "../../monitors/BatteryMonitor";
 
 interface Props {
   settings?: Settings,
 }
 
+/**
+ * This component provides the user functionality to manually select the minimum battery alert
+ * threshold, as well as outright disable it.
+ *
+ * To handle state, this component does not store internal state, but instead updates dynamically
+ * based on the data shown within the settings prop.
+ *
+ * @param props - `Props` interface defined above.
+ */
 const SettingsBatteryThresholdItem: FC<Props> = (props) => {
   const {settings, children} = props;
-  const mode = settings?.muteStatus;
+  const mode = settings?.muteStatus; // may be `undefined`.
 
+  /**
+   * Generate the options to show within the ion-select menu.
+   */
   const createOptions = () => {
     let options = [];
 
@@ -28,6 +40,9 @@ const SettingsBatteryThresholdItem: FC<Props> = (props) => {
     return options;
   }
 
+  /**
+   * Calculates the text to show within the placeholder location of the selector.
+   */
   const getText = () => {
     if (!settings?.batteryThreshold) return 'Select Below';
     const {batteryThreshold} = settings;
@@ -36,6 +51,8 @@ const SettingsBatteryThresholdItem: FC<Props> = (props) => {
     else return `${batteryThreshold}%`
   }
 
+  // Returns an `IonItem` containing an ion-select that can be used to update the battery
+  // alert threshold.
   return (
     <>
       <IonItem>

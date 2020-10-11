@@ -1,10 +1,23 @@
 import {Plugins} from '@capacitor/core';
-import {MqttEvent, MqttEventFromJson, MqttEventFromObj} from "./MqttManager";
+import {MqttEvent, MqttEventFromJson, MqttEventFromObj} from "../services/MqttManager";
 
 const {Storage} = Plugins;
 
 /**
- * Keys used to index all values handled by this storage manager.
+ * DESCRIPTION: This library acts as an interface between the rest of the application and the local storage.
+ *
+ * This library acts as an interface between the rest of the application and the local storage. This library utilises
+ * the Storage API within Capacitor. By default when using a desktop web browser this will revert to the LocalStorage
+ * exposed by the API. However, when on mobile devices this library leverages other advanced techniques and libraries
+ * to help sustain persistence again factors such as periodic clearing.
+ *
+ * Given more time, I would have liked to refactor this into it's own class and monitor state changes that way instead
+ * of all through the SettingsManager. This would have allowed extra functionality such as dynamically responding to
+ * the clear data button on the settings tab.
+ */
+
+/**
+ * Keys used to index all events array values handled by this storage manager.
  */
 export const StorageEventIndexKeys: { [index: string]: string } = {
   bedroom: '@bedroomEvents',
@@ -15,6 +28,9 @@ export const StorageEventIndexKeys: { [index: string]: string } = {
   other: '@otherEvents',
 }
 
+/**
+ * The remainder keys used to index all other data handled by this storage manager.
+ */
 export const StorageOtherKeys = {
   lastSeenEvent: '@lastSeenEvent',
   userSettings: '@userSettings',
@@ -36,8 +52,6 @@ export const getEventKey = (key: string) => {
 
 /**
  * Initialise empty arrays for all storage key entries within local storage.
- *
- * TODO: This may be broken!
  */
 export const initStorage = async () => {
   const promises: Promise<any>[] = [];
@@ -74,7 +88,9 @@ export const setEvents = async (key: string, value: MqttEvent[]) => {
   await Storage.set({
     key: key,
     value: JSON.stringify(value),
-  }).catch((e) => console.error('Failed to set events', {key, value}, e));
+  }).catch((e) => {
+    if (process.env.REACT_APP_DEBUG) console.error('Failed to set events', {key, value}, e)
+  });
 }
 
 /**
@@ -88,7 +104,9 @@ export const setEvents = async (key: string, value: MqttEvent[]) => {
 export const appendEvents = async (key: string, value: MqttEvent) => {
   let events = await getEvents(key);
   if (!Array.isArray(events)) {
-    console.error('Entry was not an array', {key, result: events});
+    if (process.env.REACT_APP_DEBUG) {
+      console.error('Entry was not an array', {key, result: events});
+    }
     events = [];
   }
   events.push(value);
@@ -157,7 +175,9 @@ export const setUserPreferences = async (settings: any): Promise<any> => {
   await Storage.set({
     key: StorageOtherKeys.userSettings,
     value: JSON.stringify(settings)
-  }).catch((e) => console.error('Failed to store new settings', e));
+  }).catch((e) => {
+    if (process.env.REACT_APP_DEBUG) console.error('Failed to store new settings', e)
+  });
   // Return stored value.
   return settings;
 }
