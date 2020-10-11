@@ -30,7 +30,7 @@ export class MqttManager {
 
     this.messageSubject.notify(event);
 
-    console.log('received message within handler', event);
+    if (process.env.REACT_APP_DEBUG) console.log('received message within handler', event);
   }
 
   private onFailure = (error: Paho.ErrorWithInvocationContext) => {

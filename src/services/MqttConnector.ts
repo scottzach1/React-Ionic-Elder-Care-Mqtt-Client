@@ -6,7 +6,7 @@ const MqttConfig = {
   port: 8080,
   topic: 'swen325/a3',
   path: '/mqtt',
-  clientId: 'pSaHsOEICndfoefhHSp'
+  clientId: 'pSaHsOEISOecCEEndfoefhHSp'
 }
 
 type MqttServiceStatus = 'Disconnected' | 'Disconnecting' | 'Connecting' | 'Connected';
@@ -19,7 +19,7 @@ export class MqttConnector {
   private onFailureHandler: Paho.OnFailureCallback | undefined;
 
   constructor() {
-    if (process.env.DEBUG) console.log('mqtt service started');
+    if (process.env.REACT_APP_DEBUG) console.log('mqtt service started');
   }
 
   public disconnect() {
@@ -37,7 +37,7 @@ export class MqttConnector {
     this.status = 'Connecting';
     this.client = new Paho.Client(address, port, path, clientId);
 
-    if (process.env.DEBUG) console.log('connecting to mqtt via websocket');
+    if (process.env.REACT_APP_DEBUG) console.log('connecting to mqtt via websocket');
     this.client.connect({
       timeout: 10,
       useSSL: false,
@@ -53,13 +53,13 @@ export class MqttConnector {
     const {topic} = MqttConfig;
     assert(this.client);
 
-    if (process.env.DEBUG) console.log('connected to mqtt');
+    if (process.env.REACT_APP_DEBUG) console.log('connected to mqtt');
     this.status = 'Connected';
     this.client.subscribe(topic);
   }
 
   public onFailure = (error: Paho.ErrorWithInvocationContext) => {
-    if (process.env.DEBUG) console.log('failed to connect to mqtt', error);
+    if (process.env.REACT_APP_DEBUG) console.log('failed to connect to mqtt', error);
     this.status = 'Disconnected';
 
     if (this.onFailureHandler) this.onFailureHandler(error);
@@ -71,8 +71,6 @@ export class MqttConnector {
   }
 
   public onMessageArrived = (message: Paho.Message) => {
-    if (process.env.DEBUG) console.log('received message', message);
-
     if (this.onMessageArrivedHandler) this.onMessageArrivedHandler(message);
   }
 

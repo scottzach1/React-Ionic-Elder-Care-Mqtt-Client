@@ -35,7 +35,7 @@ class SettingsManager {
     const storedSettings: any = await getUserPreferences();
 
     // Inject date into object.
-    if (!(['mute', 'enable', undefined].includes(storedSettings.muteStatus))){
+    if (!(['mute', 'enable', undefined].includes(storedSettings?.muteStatus))){
       storedSettings.muteStatus = new Date(storedSettings.muteStatus);
     }
 

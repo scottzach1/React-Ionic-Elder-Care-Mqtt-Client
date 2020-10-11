@@ -107,8 +107,6 @@ const BatteryTrendChart: FC<Props> = (props) => {
 
   const chartData = parseData();
 
-  console.log({chartData});
-
   return (
     <IonCard>
       <IonCardHeader>
