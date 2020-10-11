@@ -6,6 +6,7 @@ import {accessibilityOutline, batteryFullOutline, settingsOutline} from 'ionicon
 
 import './services/MqttManager';
 import './services/BatteryMonitor';
+import './services/InactivityMonitor';
 import SeniorTab from './pages/SeniorTab';
 import BatteryTab from './pages/BatteryTab';
 import SettingsTab from './pages/SettingsTab';

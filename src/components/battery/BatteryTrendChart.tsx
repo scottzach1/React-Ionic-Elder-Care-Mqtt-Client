@@ -94,7 +94,7 @@ const BatteryTrendChart: FC<Props> = (props) => {
         if (
           timestamp && (
           (events.length < numberOfReadings) ||
-          (index == events.length - 1) ||
+          (index === events.length - 1) ||
           (index) % Math.round((events.length) / numberOfReadings) === 0)
         ) {
           dataset.data.push({

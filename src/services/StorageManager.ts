@@ -61,7 +61,7 @@ export const getEvents = async (key: string): Promise<MqttEvent[] | null> => {
   const result = await Storage.get({key: key});
   if (!result.value) return null;
   let array = JSON.parse(result.value);
-  return array.map((val: any) => new MqttEventFromObj(val));
+  return array.map((val: any) => new MqttEventFromObj(val)).filter((ev: MqttEvent) => ev.timestamp);
 }
 
 /**
@@ -138,9 +138,9 @@ export const updateLastEvent = async (event: MqttEvent) => {
 /**
  * Gets the last event stored within local storage.
  */
-export const getLastEvent = async (): Promise<MqttEvent | any> => {
+export const getLastEvent = async (): Promise<MqttEvent | undefined> => {
   const resp = await Storage.get({key: StorageOtherKeys.lastSeenEvent});
-  return (resp.value) ? new MqttEventFromJson(resp.value) : null;
+  return (resp.value) ? new MqttEventFromJson(resp.value) : undefined;
 }
 
 //// USER PREFERENCES FUNCTIONS ////
