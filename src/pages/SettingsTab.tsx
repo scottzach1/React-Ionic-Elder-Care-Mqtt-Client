@@ -3,6 +3,7 @@ import {IonCard, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonPage, Io
 import SettingsClearStorageItem from "../components/settings/SettingsClearStorageItem";
 import SettingsNotificationItem from "../components/settings/SettingsNotificationItem";
 import SettingsManager, {Settings} from "../services/SettingsManager";
+import SettingsBatteryThresholdItem from "../components/settings/SettingsBatteryThresholdItem";
 
 const SettingsTab: React.FC = () => {
   const [settings, setSettingsState] = useState<Settings>();
@@ -46,6 +47,7 @@ const SettingsTab: React.FC = () => {
           </IonCardHeader>
           <SettingsClearStorageItem/>
           <SettingsNotificationItem settings={settings}/>
+          <SettingsBatteryThresholdItem settings={settings}/>
         </IonCard>
       </IonContent>
     </IonPage>

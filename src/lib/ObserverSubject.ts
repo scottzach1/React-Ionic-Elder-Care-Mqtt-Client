@@ -12,10 +12,10 @@ export class ObserverSubject<T> {
   }
 
   public detach(observerToRemove: (val: T) => void) {
-    this.observers = this.observers.filter(observer => observerToRemove !== observer);
+    this.observers = this.observers.filter((observer) => observerToRemove !== observer);
   }
 
   public notify(val: T) {
-    this.observers.forEach(observer => observer(val));
+    this.observers.forEach((observer) => observer(val));
   }
 }

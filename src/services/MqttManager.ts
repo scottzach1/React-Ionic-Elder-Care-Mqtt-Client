@@ -94,7 +94,7 @@ export class MqttEventFromJson implements MqttEvent {
     this.motionStatus = (motionStatus) ? 1 : 0;
     this.batteryStatus = (typeof batteryStatus === 'number') ? batteryStatus : -1;
 
-    if (this.batteryStatus < 0) console.error({payload});
+    if (this.batteryStatus < 0) console.trace({payload});
   }
 }
 
@@ -114,7 +114,7 @@ export class MqttEventFromObj implements MqttEvent {
     this.motionStatus = (motionStatus) ? 1 : 0;
     this.batteryStatus = (typeof batteryStatus === 'number') ? batteryStatus : -1;
 
-    if (this.batteryStatus < 0) console.error({payload});
+    if (this.batteryStatus < 0) console.trace({payload});
   }
 }
 
