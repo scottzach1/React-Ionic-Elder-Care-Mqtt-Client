@@ -1,5 +1,5 @@
-import React, {FC, useState} from "react";
-import {IonIcon, IonItem, IonLabel, IonSelect, IonSelectOption, IonToast} from "@ionic/react";
+import React, {FC} from "react";
+import {IonIcon, IonItem, IonLabel, IonSelect, IonSelectOption} from "@ionic/react";
 import {notificationsOffOutline, notificationsOutline} from "ionicons/icons";
 import PushNotifications, {NotificationOptions, NotificationStates} from "../../services/PushNotifications";
 import {Settings} from "../../services/SettingsManager";
@@ -19,16 +19,20 @@ const capitalizeFirstLetter = (text: string) => {
 }
 
 const SettingsNotificationItem: FC<Props> = (props) => {
-  const [showToast, setShowToast] = useState<boolean>(false);
-  // const [notificationText, setNotificationText] = useState<string>("Select One");
-
   const {settings, children} = props;
   const mode = settings?.muteStatus;
 
   const getNotificationText = () => {
     if (!mode) return 'Select One';
 
-    const text = (typeof mode === 'string') ? mode : `Muted for ${formatDistanceToNow(mode)}`
+    let text;
+
+    if (typeof mode === 'string')
+      text = mode;
+    else if (!PushNotifications.checkState())
+      text = 'enabled';
+    else
+      text = `muted for ${formatDistanceToNow(mode)}`
 
     return capitalizeFirstLetter(text);
   }
@@ -40,7 +44,7 @@ const SettingsNotificationItem: FC<Props> = (props) => {
   }
 
   const getIcon = () => {
-    return (PushNotifications.currentlyMuted()) ? notificationsOffOutline : notificationsOutline;
+    return (PushNotifications.checkState()) ? notificationsOffOutline : notificationsOutline;
   }
 
   return (
@@ -58,19 +62,12 @@ const SettingsNotificationItem: FC<Props> = (props) => {
             if (!mode) return;
 
             await PushNotifications.muteUntil(mode);
-            setShowToast(true);
           }}
           value={mode}
         >
           {createOptions()}
         </IonSelect>
       </IonItem>
-      <IonToast
-        isOpen={showToast}
-        onDidDismiss={() => setShowToast(false)}
-        message={"Success"}
-        duration={1200}
-      />
     </>
   );
 }

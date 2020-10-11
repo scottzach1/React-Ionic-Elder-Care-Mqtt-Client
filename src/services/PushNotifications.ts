@@ -1,5 +1,5 @@
 import {Plugins} from '@capacitor/core';
-import {addDays, addMinutes, isDate} from "date-fns";
+import {addDays, addSeconds, isDate} from "date-fns";
 import SettingsManager, {NotificationSettingState, Settings} from "./SettingsManager";
 import {ObserverSubject} from "../lib/ObserverSubject";
 
@@ -28,10 +28,15 @@ class PushNotifications {
     return (this.state) ? this.state : await this.setState(newStatus);
   }
 
-  public currentlyMuted() {
+  public checkState() {
     const {state} = this;
     const muted = (state) && (isDate(state) && state > new Date());
-    if (muted) this.setState('mute');
+    if (!muted && isDate(state)) {
+      SettingsManager.getSettings().then((settings) => {
+        settings.muteStatus = 'enable';
+        SettingsManager.setSettings(settings);
+      });
+    }
     return muted;
   }
 
@@ -44,7 +49,8 @@ class PushNotifications {
         await this.setState('mute');
         break;
       case 'Mute for 15 minutes':
-        await this.setState(addMinutes(new Date(), 15));
+        // await this.setState(addMinutes(new Date(), 15));
+        await this.setState(addSeconds(new Date(), 5));
         break;
       case 'Mute for a day':
         await this.setState(addDays(new Date(), 1));
@@ -60,7 +66,7 @@ class PushNotifications {
     const {title, body} = event;
 
     // Check that we aren't currently muted.
-    if (this.currentlyMuted()) return;
+    if (this.checkState()) return;
 
     try {
       // Request/ check permissions
@@ -77,8 +83,7 @@ class PushNotifications {
           body,
           id: PushNotifications.counter += 1,
           schedule: {
-            // For now.
-            at: new Date()
+            at: new Date(), // NOW
           }
         }]
       });
@@ -95,8 +100,12 @@ class PushNotifications {
 
   private onSettingsChange = (settings: Settings) => {
     const {muteStatus} = settings;
-    if (this.state !== muteStatus) {
-      this.setState(muteStatus);
+    this.setState(muteStatus);
+    // Schedule a callback to check the time on expire.
+    if ((isDate(muteStatus) && muteStatus > new Date())) {
+      setTimeout(() => {
+        this.checkState();
+      }, (new Date(muteStatus).getTime() - new Date().getTime()));
     }
   }
 }

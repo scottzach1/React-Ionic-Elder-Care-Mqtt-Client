@@ -6,9 +6,11 @@ import SettingsManager, {Settings} from "../services/SettingsManager";
 
 const SettingsTab: React.FC = () => {
   const [settings, setSettingsState] = useState<Settings>();
+  const [, forceRerender] = useState<any>();
 
   const onSettingsChange = (newSettings: Settings) => {
     setSettingsState(newSettings);
+    forceRerender(new Date());
   }
 
   useEffect(() => {
