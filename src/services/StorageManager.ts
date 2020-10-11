@@ -1,7 +1,5 @@
 import {Plugins} from '@capacitor/core';
-import {MqttEvent, MqttEventFromJson, MqttEventFromObj} from "../services/MqttHandler";
-import {PushNotificationsState} from "./PushNotifications";
-import {isDate} from "date-fns";
+import {MqttEvent, MqttEventFromJson, MqttEventFromObj} from "./MqttManager";
 
 const {Storage} = Plugins;
 
@@ -145,46 +143,16 @@ export const getLastEvent = async (): Promise<MqttEvent | any> => {
   return (resp.value) ? new MqttEventFromJson(resp.value) : null;
 }
 
-
 //// USER PREFERENCES FUNCTIONS ////
-export interface Settings {
-  dataExpirationAge: Duration,
-  muteStatus: PushNotificationsState,
+
+export const getUserPreferences = async (): Promise<any> => {
+  // Extract value from response.
+  const {value} = await Storage.get({key: StorageOtherKeys.userSettings});
+  // Parse as JSON if non-null;
+  return (value) ? JSON.parse(value) : value;
 }
 
-function isSettings(obj: any): obj is Settings {
-  const {dataExpirationAge, muteStatus} = obj;
-
-  return obj && typeof obj === 'object' &&
-    typeof dataExpirationAge === 'object' &&
-    (isDate(muteStatus) || typeof obj === 'string');
-}
-
-export const initUserPreferences = async (): Promise<Settings> => {
-  // Construct default object.
-  const settings: Settings = {
-    dataExpirationAge: {
-      years: 1,
-    },
-    muteStatus: 'enable',
-  }
-  // Wait and update storage.
-  await Storage.set({
-    key: StorageOtherKeys.userSettings,
-    value: JSON.stringify(settings)
-  }).catch((e) => console.error('Failed to store new settings', e));
-  // Return stored value.
-  return settings;
-}
-
-export const getUserPreferences = async (): Promise<Settings> => {
-  const resp = await Storage.get({key: StorageOtherKeys.userSettings});
-  const settings = JSON.parse((resp.value) ? resp.value : 'INVALID');
-
-  return (isSettings(settings)) ? settings : await initUserPreferences();
-}
-
-export const setUserPreferences = async (settings: Settings): Promise<Settings> => {
+export const setUserPreferences = async (settings: any): Promise<any> => {
   // Wait and update storage.
   await Storage.set({
     key: StorageOtherKeys.userSettings,

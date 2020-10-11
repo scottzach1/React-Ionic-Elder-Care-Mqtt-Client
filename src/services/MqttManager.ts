@@ -1,12 +1,12 @@
-import {MqttService} from "./MqttService";
+import {MqttConnector} from "./MqttConnector";
 import Paho from "paho-mqtt";
-import {appendEvents, getEventKey, initStorage, updateLastEvent} from "../external/StorageManager";
-import {ObserverSubject} from "./ObserverSubject";
+import {appendEvents, getEventKey, initStorage, updateLastEvent} from "./StorageManager";
+import {ObserverSubject} from "../lib/ObserverSubject";
 
-export class MqttHandler {
-  private client: MqttService | undefined;
+export class MqttManager {
   public messageSubject = new ObserverSubject<MqttEvent>();
   public failureSubject = new ObserverSubject<Paho.MQTTError>();
+  private client: MqttConnector | undefined;
 
   public constructor() {
     // Ensure Storage Initialised before we connect.
@@ -14,7 +14,7 @@ export class MqttHandler {
   }
 
   private connect() {
-    this.client = new MqttService();
+    this.client = new MqttConnector();
     this.client.connect();
     this.client.setOnFailureHandler(this.onFailure);
     this.client.setOnMessageArrivedHandler(this.onMessageArrived);
@@ -114,4 +114,4 @@ export class MqttEventFromObj implements MqttEvent {
   }
 }
 
-export default new MqttHandler();
+export default new MqttManager();

@@ -11,7 +11,7 @@ const MqttConfig = {
 
 type MqttServiceStatus = 'Disconnected' | 'Disconnecting' | 'Connecting' | 'Connected';
 
-export class MqttService {
+export class MqttConnector {
   private status: MqttServiceStatus = 'Disconnected';
   private client: Paho.Client | undefined;
 

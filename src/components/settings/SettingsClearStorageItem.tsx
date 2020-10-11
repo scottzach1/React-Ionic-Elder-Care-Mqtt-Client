@@ -1,7 +1,7 @@
 import React, {FC, useState} from "react";
 import {IonAlert, IonButton, IonIcon, IonItem, IonLabel, IonToast} from "@ionic/react";
 import {trashBinSharp} from "ionicons/icons";
-import {clearAllEvents} from "../../external/StorageManager";
+import {clearAllEvents} from "../../services/StorageManager";
 
 interface Props {
 }

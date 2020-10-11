@@ -1,5 +1,5 @@
-import MqttHandler, {MqttEvent} from "./MqttHandler";
-import PushNotifications from "../external/PushNotifications";
+import MqttHandler, {MqttEvent} from "./MqttManager";
+import PushNotifications from "./PushNotifications";
 
 class BatteryMonitor {
   public threshold: number = 20;

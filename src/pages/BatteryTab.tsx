@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import BatteryReadingsChart, {BatteryReadingsType} from "../components/battery/BatteryReadingsChart";
-import MqttHandler, {MqttEvent} from "../services/MqttHandler";
-import {getEvents, StorageEventIndexKeys} from "../external/StorageManager";
+import MqttHandler, {MqttEvent} from "../services/MqttManager";
+import {getEvents, StorageEventIndexKeys} from "../services/StorageManager";
 import BatteryTrendChart, {BatteryTrendsType} from "../components/battery/BatteryTrendChart";
 
 const BatteryTab: React.FC = () => {

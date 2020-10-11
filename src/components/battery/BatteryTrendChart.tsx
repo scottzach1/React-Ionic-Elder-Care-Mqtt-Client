@@ -1,4 +1,4 @@
-import {MqttEvent} from "../../services/MqttHandler";
+import {MqttEvent} from "../../services/MqttManager";
 import React, {FC, useRef} from "react";
 import {IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle} from "@ionic/react";
 import {Line} from "react-chartjs-2";

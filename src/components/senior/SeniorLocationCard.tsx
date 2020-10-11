@@ -1,6 +1,6 @@
 import React, {FC} from "react";
 import {IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle} from "@ionic/react";
-import {MqttEvent} from "../../services/MqttHandler";
+import {MqttEvent} from "../../services/MqttManager";
 import {formatDistanceToNow} from 'date-fns';
 
 interface Props {

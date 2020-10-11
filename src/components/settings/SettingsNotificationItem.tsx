@@ -1,71 +1,63 @@
 import React, {FC, useState} from "react";
 import {IonIcon, IonItem, IonLabel, IonSelect, IonSelectOption, IonToast} from "@ionic/react";
 import {notificationsOffOutline, notificationsOutline} from "ionicons/icons";
-import PushNotifications, {PushNotificationsState} from "../../external/PushNotifications";
-import {addDays, addMinutes} from "date-fns";
+import PushNotifications, {NotificationOptions, NotificationStates} from "../../services/PushNotifications";
+import {Settings} from "../../services/SettingsManager";
+import {formatDistanceToNow} from "date-fns";
 
 interface Props {
+  settings?: Settings,
 }
 
-type NotificationState = 'Enable' | 'Mute' | 'Mute for 15 minutes' | 'Mute for a day';
-
-const NotificationStates: { [key in NotificationState]: { icon: string, getDate: () => PushNotificationsState } } = {
-  'Enable': {
-    icon: notificationsOutline,
-    getDate: () => 'enable'
-  },
-  'Mute': {
-    icon: notificationsOffOutline,
-    getDate: () => 'mute'
-  },
-  'Mute for 15 minutes': {
-    icon: notificationsOffOutline,
-    getDate: () => addMinutes(new Date(), 15)
-  },
-  'Mute for a day': {
-    icon: notificationsOffOutline,
-    getDate: () => addDays(new Date(), 1)
-  },
+/**
+ * Helper method to capitalize the first letter of a string.
+ *
+ * @param text - input string.
+ */
+const capitalizeFirstLetter = (text: string) => {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 const SettingsNotificationItem: FC<Props> = (props) => {
-  const [mode, setMode] = useState<NotificationState | undefined>();
   const [showToast, setShowToast] = useState<boolean>(false);
+  // const [notificationText, setNotificationText] = useState<string>("Select One");
 
-  if (!mode) {
-    setMode((PushNotifications.muteUntil === 'mute') ? 'Mute' : 'Enable');
+  const {settings, children} = props;
+  const mode = settings?.muteStatus;
+
+  const getNotificationText = () => {
+    if (!mode) return 'Select One';
+
+    const text = (typeof mode === 'string') ? mode : `Muted for ${formatDistanceToNow(mode)}`
+
+    return capitalizeFirstLetter(text);
   }
 
   const createOptions = () => {
-    let options = [];
+    return NotificationStates.map((opt: NotificationOptions) => (
+      <IonSelectOption value={opt} key={`option-${opt}`}>{opt}</IonSelectOption>
+    ));
+  }
 
-    for (let key in NotificationStates) {
-      options.push(
-        <IonSelectOption value={key} key={`option-${key}`}>{key}</IonSelectOption>
-      );
-    }
-
-    return options;
+  const getIcon = () => {
+    return (PushNotifications.currentlyMuted()) ? notificationsOffOutline : notificationsOutline;
   }
 
   return (
     <>
       <IonItem>
-        <IonIcon icon={(mode) ? NotificationStates[mode].icon : notificationsOutline}/>
+        <IonIcon icon={getIcon()}/>
         <span>&nbsp;&nbsp;</span>
-        <IonLabel>{(props.children) ? props.children : 'Notifications'}</IonLabel>
+        <IonLabel>{(children) ? children : 'Notifications'}</IonLabel>
         <IonSelect
           interface="action-sheet"
           multiple={false}
-          placeholder="Select One"
-          onIonChange={(e: { detail: { value?: NotificationState } }) => {
+          placeholder={getNotificationText()}
+          onIonChange={async (e: { detail: { value?: NotificationOptions } }) => {
             const mode = e.detail.value;
-
             if (!mode) return;
 
-            console.log('setting date', {date: NotificationStates[mode].getDate()})
-            PushNotifications.muteUntil = (NotificationStates[mode].getDate());
-            setMode(mode);
+            await PushNotifications.muteUntil(mode);
             setShowToast(true);
           }}
           value={mode}

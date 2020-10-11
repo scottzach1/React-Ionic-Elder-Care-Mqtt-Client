@@ -1,9 +1,28 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {IonCard, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
 import SettingsClearStorageItem from "../components/settings/SettingsClearStorageItem";
 import SettingsNotificationItem from "../components/settings/SettingsNotificationItem";
+import SettingsManager, {Settings} from "../services/SettingsManager";
 
 const SettingsTab: React.FC = () => {
+  const [settings, setSettingsState] = useState<Settings>();
+
+  const onSettingsChange = (newSettings: Settings) => {
+    setSettingsState(newSettings);
+  }
+
+  useEffect(() => {
+    SettingsManager.settingsSubject.attach(onSettingsChange);
+
+    return () => SettingsManager.settingsSubject.detach(onSettingsChange);
+  }, []);
+
+  const refreshSettings = async () => {
+    setSettingsState(await SettingsManager.getSettings());
+  }
+
+  if (!settings) refreshSettings().then();
+
   return (
     <IonPage>
       <IonHeader>
@@ -24,7 +43,7 @@ const SettingsTab: React.FC = () => {
             </IonCardTitle>
           </IonCardHeader>
           <SettingsClearStorageItem/>
-          <SettingsNotificationItem/>
+          <SettingsNotificationItem settings={settings}/>
         </IonCard>
       </IonContent>
     </IonPage>
