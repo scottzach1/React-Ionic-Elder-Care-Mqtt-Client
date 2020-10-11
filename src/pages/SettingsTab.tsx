@@ -5,6 +5,7 @@ import SettingsNotificationItem from "../components/settings/SettingsNotificatio
 import SettingsManager, {Settings} from "../services/SettingsManager";
 import SettingsBatteryThresholdItem from "../components/settings/SettingsBatteryThresholdItem";
 import SettingsInactivityThresholdItem from "../components/settings/SettingsInactivityThresholdItem";
+import SettingsAboutItem from "../components/settings/SettingsAboutItem";
 
 const SettingsTab: React.FC = () => {
   const [settings, setSettingsState] = useState<Settings>();
@@ -50,6 +51,14 @@ const SettingsTab: React.FC = () => {
           <SettingsNotificationItem settings={settings}/>
           <SettingsBatteryThresholdItem settings={settings}/>
           <SettingsInactivityThresholdItem settings={settings}/>
+        </IonCard>
+        <IonCard>
+          <IonCardHeader>
+            <IonCardTitle>
+              About
+            </IonCardTitle>
+          </IonCardHeader>
+          <SettingsAboutItem/>
         </IonCard>
       </IonContent>
     </IonPage>
