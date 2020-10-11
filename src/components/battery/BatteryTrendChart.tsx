@@ -44,7 +44,7 @@ const labelColors: { [index: string]: Rgb } = {};
 
 const BatteryTrendChart: FC<Props> = (props) => {
   const chartRef = useRef(null);
-  const {numberOfReadings} = props;
+  const numberOfReadings = (props.numberOfReadings) ? props.numberOfReadings : 20;
 
   const getRGB = (key: string): Rgb => {
     if (labelColors[key]) return labelColors[key];
@@ -74,7 +74,7 @@ const BatteryTrendChart: FC<Props> = (props) => {
     for (let key in trends) {
       if (!trends.hasOwnProperty(key) || !Array.isArray(trends[key])) continue;
       if (!trends[key].length) continue;
-      const events = trends[key];
+      let events = trends[key];
 
       const {red, green, blue} = getRGB(key);
 
@@ -88,16 +88,21 @@ const BatteryTrendChart: FC<Props> = (props) => {
         data: []
       }
 
-      for (let event of events.slice(events.length - ((numberOfReadings) ? numberOfReadings : 20))) {
+      events.forEach((event, index) => {
         const {timestamp, batteryStatus} = event;
 
-        if (!timestamp) break;
-
-        dataset.data.push({
-          x: timestamp,
-          y: batteryStatus,
-        });
-      }
+        if (
+          timestamp && (
+          (events.length < numberOfReadings) ||
+          (index == events.length - 1) ||
+          (index) % Math.round((events.length) / numberOfReadings) === 0)
+        ) {
+          dataset.data.push({
+            x: timestamp,
+            y: batteryStatus,
+          });
+        }
+      });
 
       data.datasets.push(dataset);
     }

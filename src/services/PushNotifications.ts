@@ -1,5 +1,5 @@
 import {Plugins} from '@capacitor/core';
-import {addDays, addSeconds, isDate} from "date-fns";
+import {addDays, addMinutes, isDate} from "date-fns";
 import SettingsManager, {NotificationSettingState, Settings} from "./SettingsManager";
 import {ObserverSubject} from "../lib/ObserverSubject";
 
@@ -49,8 +49,7 @@ class PushNotifications {
         await this.setState('mute');
         break;
       case 'Mute for 15 minutes':
-        // await this.setState(addMinutes(new Date(), 15));
-        await this.setState(addSeconds(new Date(), 5));
+        await this.setState(addMinutes(new Date(), 15));
         break;
       case 'Mute for a day':
         await this.setState(addDays(new Date(), 1));

@@ -94,7 +94,7 @@ const BatteryTab: React.FC = () => {
             </IonToolbar>
           </IonHeader>
           <BatteryReadingsChart totals={batteryLevels}/>
-          <BatteryTrendChart trends={batteryTrends}/>
+          <BatteryTrendChart trends={batteryTrends} numberOfReadings={20}/>
         </IonContent>
       </IonPage>
     );
