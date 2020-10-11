@@ -58,7 +58,7 @@ class SettingsManager {
       },
       muteStatus: 'enable',
       batteryThreshold: 5,
-      inactivityThreshold: 10,
+      inactivityThreshold: 5,
     }
 
     return this.setSettings(settings);

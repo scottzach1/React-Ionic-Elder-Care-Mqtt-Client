@@ -1,6 +1,7 @@
 import MqttHandler, {MqttEvent} from "./MqttManager";
 import PushNotifications from "./PushNotifications";
 import SettingsManager from "./SettingsManager";
+import {getLastEvent} from "./StorageManager";
 
 class BatteryMonitor {
   public threshold: number = 20;
@@ -10,6 +11,7 @@ class BatteryMonitor {
     SettingsManager.settingsSubject.attach((settings) => {
       this.threshold = settings.batteryThreshold;
     });
+    getLastEvent().then(this.messageHandler);
   }
 
   public async setThreshold(level: number) {
@@ -19,8 +21,8 @@ class BatteryMonitor {
     return this.threshold = level;
   }
 
-  private messageHandler = async (message: MqttEvent) => {
-    if (message.batteryStatus < this.threshold) {
+  private messageHandler = async (message?: MqttEvent) => {
+    if (message && message.batteryStatus < this.threshold) {
       await PushNotifications.notifyBatteryEvent({
         title: `${message.sensorLocation} has low battery level (${message.batteryStatus}%)`,
         body: `Click here for more details`,

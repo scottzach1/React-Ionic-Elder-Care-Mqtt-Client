@@ -1,14 +1,14 @@
 import React, {FC} from "react";
 import {IonIcon, IonItem, IonLabel, IonSelect, IonSelectOption} from "@ionic/react";
-import {batteryHalfOutline} from "ionicons/icons";
+import {alertCircleOutline} from "ionicons/icons";
 import {Settings} from "../../services/SettingsManager";
-import BatteryMonitor from "../../services/BatteryMonitor";
+import InactivityMonitor from "../../services/InactivityMonitor";
 
 interface Props {
   settings?: Settings,
 }
 
-const SettingsBatteryThresholdItem: FC<Props> = (props) => {
+const SettingsInactivityThresholdItem: FC<Props> = (props) => {
   const {settings, children} = props;
   const mode = settings?.muteStatus;
 
@@ -16,12 +16,12 @@ const SettingsBatteryThresholdItem: FC<Props> = (props) => {
     let options = [];
 
     options.push(
-      <IonSelectOption value={-1} key={`option-off-percent`}>Off</IonSelectOption>
+      <IonSelectOption value={-1} key={`option-off-minutes`}>Off</IonSelectOption>
     );
 
-    for (let i = 0; i <= 30; i += 5) {
+    for (let i of [1, 2, 3, 4, 5, 10, 15, 20, 30]) {
       options.push(
-        <IonSelectOption value={i} key={`option-${i}-percent`}>{i}%</IonSelectOption>
+        <IonSelectOption value={i} key={`option-${i}-minutes`}>{i} Minutes</IonSelectOption>
       );
     }
 
@@ -29,19 +29,19 @@ const SettingsBatteryThresholdItem: FC<Props> = (props) => {
   }
 
   const getText = () => {
-    if (!settings?.batteryThreshold) return 'Select Below';
-    const {batteryThreshold} = settings;
+    if (!settings) return 'Select Below';
+    const {inactivityThreshold} = settings;
 
-    if (batteryThreshold < 0) return `Off`;
-    else return `${batteryThreshold}%`
+    if (inactivityThreshold < 0) return `Off`;
+    else return `${inactivityThreshold} Minutes`
   }
 
   return (
     <>
       <IonItem>
-        <IonIcon icon={batteryHalfOutline}/>
+        <IonIcon icon={alertCircleOutline}/>
         <span>&nbsp;&nbsp;</span>
-        <IonLabel>{(children) ? children : 'Battery Alerts'}</IonLabel>
+        <IonLabel>{(children) ? children : 'Inactivity Alerts'}</IonLabel>
         <IonSelect
           interface="action-sheet"
           multiple={false}
@@ -49,7 +49,7 @@ const SettingsBatteryThresholdItem: FC<Props> = (props) => {
           onIonChange={async (e) => {
             const value = e.detail.value;
             if (typeof value !== 'number') return;
-            await BatteryMonitor.setThreshold(value);
+            await InactivityMonitor.setThreshold(value);
           }}
           value={mode}
         >
@@ -60,4 +60,4 @@ const SettingsBatteryThresholdItem: FC<Props> = (props) => {
   );
 }
 
-export default SettingsBatteryThresholdItem;
+export default SettingsInactivityThresholdItem;

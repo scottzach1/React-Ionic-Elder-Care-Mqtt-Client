@@ -6,7 +6,7 @@ const MqttConfig = {
   port: 8080,
   topic: 'swen325/a3',
   path: '/mqtt',
-  clientId: 'pSaHsOEISOecCEEndfoefhHSp'
+  clientId: 'pSaHsOEISOecCEEndfoeSOUCDHhEzsE'
 }
 
 type MqttServiceStatus = 'Disconnected' | 'Disconnecting' | 'Connecting' | 'Connected';
