@@ -32,7 +32,9 @@ export class MqttManager {
     this.client.connect();
     this.client.pahoErrorSubject.attach(this.onFailure);
     this.client.pahoMessageSubject.attach(this.onMessageArrived);
-    console.log('handler connected');
+    if (process.env.REACT_APP_DEBUG) {
+      console.log('handler connected');
+    }
   }
 
   /**
@@ -51,7 +53,9 @@ export class MqttManager {
 
     this.messageSubject.notify(event);
 
-    if (process.env.REACT_APP_DEBUG) console.log('received message within handler', event);
+    if (process.env.REACT_APP_DEBUG) {
+      console.log('received message within handler', event);
+    }
   }
 
   /**
@@ -61,7 +65,9 @@ export class MqttManager {
    * @param error - Paho error to handle.
    */
   private onFailure = (error: Paho.ErrorWithInvocationContext) => {
-    console.log('failed to connect to mqtt within handler', error);
+    if (process.env.REACT_APP_DEBUG) {
+      console.log('failed to connect to mqtt within handler', error);
+    }
     this.failureSubject.notify(error);
   }
 }
@@ -106,7 +112,9 @@ export class MqttEventFromCsv implements MqttEvent {
     try {
       this.timestamp = new Date(data[0]);
     } catch (e) {
-      console.error('Failed to parse date', e);
+      if (process.env.REACT_APP_DEBUG) {
+        console.error('Failed to parse date', e);
+      }
     }
 
     // Sensor Location
@@ -145,7 +153,9 @@ export class MqttEventFromJson implements MqttEvent {
     this.motionStatus = (motionStatus) ? 1 : 0;
     this.batteryStatus = (typeof batteryStatus === 'number') ? batteryStatus : -1;
 
-    if (this.batteryStatus < 0) console.trace({payload});
+    if (this.batteryStatus < 0 && process.env.REACT_APP_DEBUG) {
+      console.trace({payload});
+    }
   }
 }
 

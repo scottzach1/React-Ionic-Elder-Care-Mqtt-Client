@@ -62,7 +62,7 @@ const SeniorLocationsGraph: FC<Props> = (props) => {
           Locations Seen
         </IonCardTitle>
         <IonCardSubtitle>
-          Totals for each location hits in last 'n' amount of time.
+          Totals hits of motion activity for each location.
         </IonCardSubtitle>
       </IonCardHeader>
       <IonCardContent>
