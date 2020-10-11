@@ -1,7 +1,7 @@
 import React, {FC} from "react";
 import {IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle} from "@ionic/react";
 import {MqttEvent} from "../../services/MqttManager";
-import {formatDistanceToNow} from 'date-fns';
+import {format, formatDistanceToNow} from 'date-fns';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBed, faBlender, faCouch, faQuestion, faToilet, faUtensils} from '@fortawesome/free-solid-svg-icons'
 
@@ -46,6 +46,8 @@ const SeniorLocationCard: FC<Props> = (props) => {
       break
   }
 
+  location = capitalizeFirstLetter(location);
+
   return (
     <IonCard>
       <FontAwesomeIcon icon={icon} size={'8x'} style={{float: 'right', padding: '7px'}}/>
@@ -58,10 +60,19 @@ const SeniorLocationCard: FC<Props> = (props) => {
         </IonCardSubtitle>
       </IonCardHeader>
       <IonCardContent>
-        This contains some other information about the location...
+        {lastSeenEvent?.timestamp ? format(lastSeenEvent.timestamp, 'PPPPpppp') : 'Nothing to see here'}
       </IonCardContent>
     </IonCard>
   );
+}
+
+/**
+ * Helper method to capitalize the first letter of a string.
+ *
+ * @param text - input string.
+ */
+const capitalizeFirstLetter = (text: string) => {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 export default SeniorLocationCard;
