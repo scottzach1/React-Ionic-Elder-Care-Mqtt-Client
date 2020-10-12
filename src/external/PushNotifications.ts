@@ -30,7 +30,7 @@ class PushNotifications {
 
   public checkMuted() {
     const {state} = this;
-    const muted = (state) && (isDate(state) && state > new Date());
+    const muted = (state) && ((state === 'mute') || (isDate(state) && state > new Date()));
     if (!muted && isDate(state)) {
       SettingsManager.getSettings().then((settings) => {
         settings.muteStatus = 'enable';
